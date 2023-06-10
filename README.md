@@ -1,6 +1,6 @@
 ## Authors
-* Name:  Email:
-* Name:  Email:
+* Name: Ariel Amon  Email: arielam@edu.hac.ac.il 208244038
+* Name:  Noam Mirjani  Email: noammir@edu.hac.ac.il 315216515
 
 ## Description
 
