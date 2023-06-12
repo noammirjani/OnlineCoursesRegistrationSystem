@@ -29,9 +29,9 @@ public class MainController {
         return "login";
     }
 
-    @GetMapping("/register")
+    @GetMapping("/About-Us")
     public String register() {
-        return "register";
+        return "About-Us";
     }
 
     @GetMapping("/courses")
