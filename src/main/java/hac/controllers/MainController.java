@@ -40,12 +40,6 @@ public class MainController {
         return "about-Us";
     }
 
-//    @GetMapping( "/Courses" )
-//    public String getCourses(Model model) {
-//        Iterable<Course> courses = repository.findAll();
-//        model.addAttribute("courses", courses);
-//        return "courses";
-//    }
 @GetMapping("/courses")
 public String main(Model model) {
     model.addAttribute("coursesData", repository.findAll());
@@ -58,10 +52,15 @@ public String main(Model model) {
     }
 
     @RequestMapping("/admin")
-    public String adminIndex(Model model) {
+    public String adminIndex() {
+        return "admin/index";
+    }
+
+    @RequestMapping("/admin/coursesManage")
+    public String adminCourses(Model model) {
         Iterable<Course> courses = repository.findAll();
         model.addAttribute("courses", courses);
-        return "admin/index";
+        return "admin/coursesManage";
     }
 
     @RequestMapping("/403")
