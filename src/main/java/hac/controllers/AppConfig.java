@@ -45,7 +45,7 @@ public class AppConfig {
                 .csrf(withDefaults())
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("static/**", "/css/**", "/403", "/errorpage","/", "/register", "/courses", "/About-Us").permitAll()
-                        .requestMatchers("/admin/**", "/api/**").hasRole("ADMIN")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/user/**").hasRole("USER"))
                 .formLogin((form) -> form
                                  .loginPage("/login")

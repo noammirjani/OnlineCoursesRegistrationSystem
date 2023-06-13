@@ -1,7 +1,10 @@
 package hac.controllers;
 
+import hac.repo.Course;
+import hac.repo.CourseRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,6 +22,9 @@ import java.security.Principal;
 public class MainController {
 
     private static Logger logger = LoggerFactory.getLogger(MainController.class);
+    @Autowired
+    private CourseRepository repository;
+
     @RequestMapping("/")
     public String index() {  // add Principal principal to argument to show loged user details
         return "index";
@@ -34,10 +40,13 @@ public class MainController {
         return "About-Us";
     }
 
-//    @GetMapping("/courses")
-//    public String courses() {
-//        return "courses";
-//    }
+    @GetMapping( "/Courses" )
+    public String getCourses(Model model) {
+        Iterable<Course> courses = repository.findAll();
+        model.addAttribute("courses", courses);
+        return "courses";
+    }
+
 
     @RequestMapping("/user")
     public String userIndex() {
@@ -45,7 +54,9 @@ public class MainController {
     }
 
     @RequestMapping("/admin")
-    public String adminIndex() {
+    public String adminIndex(Model model) {
+        Iterable<Course> courses = repository.findAll();
+        model.addAttribute("courses", courses);
         return "admin/index";
     }
 

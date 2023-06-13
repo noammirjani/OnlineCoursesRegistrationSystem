@@ -19,6 +19,18 @@
                 <a class="nav-link fw-bold py-1 px-0 active" aria-current="page"th:href="@{/}">Home</a>
                 <a class="nav-link fw-bold py-1 px-0"  th:href="@{/courses}">Courses</a>
                 <a class="nav-link fw-bold py-1 px-0" th:href="@{/About-Us}">About-Us</a>
+                <div class="login-logout">
+                    <div th:if="${#authorization.expression('isAuthenticated()')}">
+                        <form th:action="@{/logout}" method="post" style="display:inline">
+                            <input type="submit" value="Logout" class="btn btn-light mx-5"/>
+                        </form>
+                    </div>
+                    <div th:unless="${#authorization.expression('isAuthenticated()')}">
+                        <form th:action="@{/login}" method="post" style="display:inline">
+                            <input type="submit" value="login" class="btn btn-light mx-5"/>
+                        </form>
+                    </div>
+                </div>
             </nav>
         </div>
     </header>
