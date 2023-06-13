@@ -39,9 +39,9 @@ body {
 }
 
 body {
-    background: linear-gradient(135deg, #d7b4ff, #97a4ff, #308cf5,  #79ffc8, #ffcee4);
+    background: linear-gradient(135deg, #d7b4ff, #97a4ff, #66a0e8,  #79ffc8, #ffcee4);
     background-size: 500% 500%;
-    animation: gradientAnimation 15s ease infinite;
+    animation: gradientAnimation 20s ease infinite;
 }
 
 @keyframes gradientAnimation {

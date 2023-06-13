@@ -1,10 +1,9 @@
 package hac.repo;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import java.util.List;
 
 /* default scope of this Bean is "singleton" */
-public interface courseRepository extends JpaRepository<Course, Long> {
+public interface CourseRepository extends JpaRepository<Course, Long> {
 
     /** SOME EXAMPLES:
      *  defining some queries using the method names

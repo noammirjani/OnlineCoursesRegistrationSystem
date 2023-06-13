@@ -41,6 +41,9 @@ public class Course implements Serializable {
     @Positive(message = "Year must be positive")
     private Integer year = 0;
 
+    @NotEmpty(message = "Overview text is mandatory")
+    private String overview;
+
     public Course(Integer courseCode, String courseName, String semester,
                   Integer capacity, String professor, Integer year) {
         this.courseCode = courseCode;
@@ -49,6 +52,7 @@ public class Course implements Serializable {
         this.capacity = capacity;
         this.professor = professor;
         this.year = year;
+        this.overview = overview;
     }
 
     public Course() {
@@ -79,6 +83,8 @@ public class Course implements Serializable {
     public String getProfessor() {
         return professor;
     }
+
+    public String getOverview() {return overview;}
 
     public Integer getYear() {
         return year;
@@ -112,6 +118,8 @@ public class Course implements Serializable {
         this.year=year;
     }
 
-
+    public void setOverview(String overview) {
+        this.overview=overview;
+    }
 }
 

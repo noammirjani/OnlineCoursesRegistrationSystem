@@ -34,10 +34,10 @@ public class MainController {
         return "About-Us";
     }
 
-    @GetMapping("/courses")
-    public String courses() {
-        return "courses";
-    }
+//    @GetMapping("/courses")
+//    public String courses() {
+//        return "courses";
+//    }
 
     @RequestMapping("/user")
     public String userIndex() {
