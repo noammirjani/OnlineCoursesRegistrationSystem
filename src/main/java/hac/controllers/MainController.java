@@ -35,18 +35,22 @@ public class MainController {
         return "login";
     }
 
-    @GetMapping("/About-Us")
+    @GetMapping("/about-Us")
     public String register() {
-        return "About-Us";
+        return "about-Us";
     }
 
-    @GetMapping( "/Courses" )
-    public String getCourses(Model model) {
-        Iterable<Course> courses = repository.findAll();
-        model.addAttribute("courses", courses);
-        return "courses";
-    }
-
+//    @GetMapping( "/Courses" )
+//    public String getCourses(Model model) {
+//        Iterable<Course> courses = repository.findAll();
+//        model.addAttribute("courses", courses);
+//        return "courses";
+//    }
+@GetMapping("/courses")
+public String main(Model model) {
+    model.addAttribute("coursesData", repository.findAll());
+    return "courses";
+}
 
     @RequestMapping("/user")
     public String userIndex() {
