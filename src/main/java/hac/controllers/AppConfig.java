@@ -44,7 +44,7 @@ public class AppConfig {
         http.cors(withDefaults())
                 .csrf(withDefaults())
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("static/**", "/css/**", "/403", "/errorpage","/", "/register", "/courses", "/about-Us").permitAll()
+                        .requestMatchers("static/**", "/css/**", "/fragments/**", "/403", "/errorpage","/", "/register", "/courses", "/about-us").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/user/**").hasRole("USER"))
                 .formLogin((form) -> form

@@ -106,8 +106,13 @@ public class MainController {
 
 
     //------------------ get request to menu items --------------------
+//    @GetMapping("/")
+//    public String index() {  // add Principal principal to argument to show loged user details
+//        return "index";
+//    }
     @GetMapping("/")
-    public String index() {  // add Principal principal to argument to show loged user details
+    public String home(Model model) {
+        model.addAttribute("activeMenu", "home");
         return "index";
     }
 
@@ -120,12 +125,14 @@ public class MainController {
     @GetMapping("/courses")
     public String main(Model model) {
         model.addAttribute("coursesData", repository.findAll());
+        model.addAttribute("activeMenu", "courses");
         return "courses";
     }
 
-    @GetMapping("/about-Us")
-    public String register() {
-        return "about-Us";
+    @GetMapping("/about-us")
+    public String register(Model model) {
+        model.addAttribute("activeMenu", "aboutUs");
+        return "about-us";
     }
 
 
