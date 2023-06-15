@@ -51,11 +51,26 @@
         </div>
       </section>
     </div>
+
     <div class="col d-none d-md-block d-flex justify-content-center align-items-center mt-5">
       <img src="https://img.freepik.com/free-vector/hand-drawn-flat-design-stack-books-illustration_23-2149341898.jpg"
            alt="Circular Image" class="rounded-circle w-75 h-75">
     </div>
   </div>
+
+  <div th:if="${addedCourse}">
+    <div class="alert alert-success text-center" role="alert">
+      Course added successfully!
+    </div>
+  </div>
+
+  <div th:if="${editedCourse}">
+    <div class="alert alert-success text-center" role="alert">
+      Course was edited successfully!
+    </div>
+  </div>
+
+
   <div class="container mb-5 text-center">
     <div class="table-responsive" >
       <table class="table table-hover">
@@ -81,12 +96,16 @@
           <td class="text-justify" th:text="${course.semester}"></td>
           <td class="text-justify" th:text="${course.capacity}"></td>
           <td class="text-start" th:text="${course.overview}"></td>
-          <td><a class="btn btn-outline-danger my-2" th:href="@{/admin}">delete </a></td>
-          <td><a class="btn btn-outline-warning my-2" th:href="@{/admin}">edit </a></td>
+          <td>
+            <form th:action="@{'/admin/coursesManage/deleteCourse/' + ${course.id}}" method="post">
+              <button type="submit" class="btn btn-outline-danger my-2">delete</button>
+            </form>
+          </td>
+          <td><a class="btn btn-outline-warning my-2" th:href="@{'/admin/coursesManage/editCourse/' + ${course.id}}">edit </a></td>
         </tr>
         </tbody>
       </table>
-      <a class="btn btn-outline-success my-2 mb-5" th:href="@{/admin}"> + new course </a>
+      <a class="btn btn-outline-success my-2 mb-5" th:href="@{/admin/coursesManage/addCourse}"> + new course </a>
     </div>
   </div>
 </main>

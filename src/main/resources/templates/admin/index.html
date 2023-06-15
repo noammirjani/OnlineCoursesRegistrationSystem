@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <title>OCM</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
-    <link rel="stylesheet" th:href="@{/css/login.css}" />
+<!--    <link rel="stylesheet" th:href="@{/css/login.css}" />-->
 </head>
 <body>
 
@@ -27,9 +27,26 @@
     </div>
 </header>
 <main class="container text-center">
+    <div class="px-4 pt-5 my-5 text-center border-bottom">
+        <h1 class="display-4 fw-bold text-body-emphasis">Welcome, Admin!</h1>
+        <div class="col-lg-6 mx-auto mt-5">
+            <p class="lead mb-4"> On this page, you have the following options for managing the online course registration: <br>
+                Manage Courses: You can add, edit, and remove courses from the course catalog. Update the course details to ensure accurate information for students.
+                Manage Students: You have the ability to manage student accounts and their course registrations.
+                Feel free to navigate through the available options and manage the online course registration system according to your needs.
+            </p>
+            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                <a class="btn btn-primary my-2" th:href="@{/}"> go to home page </a>
+                <a class="btn btn-primary my-2" th:href="@{/admin/coursesManage}">manage courses</a>
+                <a class="btn btn-primary my-2" th:href="@{/admin/studentManage}">manage student</a>
+            </div>
+        </div>
+        <div class="container px-5">
+            <img src="https://img.freepik.com/free-vector/group-students-watching-online-webinar_74855-5514.jpg?w=2000&t=st=1686676153~exp=1686676753~hmac=24bccf1aced6a7151fa3c6e1ae41d1afe371e1db2565164b2f847b6c266163b5" class="img-fluid rounded-3 mb-4"
+                 alt="Example image" width="700" height="500" loading="lazy">
+        </div>
+    </div>
 
-    <a class="btn btn-secondary my-2" th:href="@{/admin/coursesManage}">manage courses</a>
-    <a class="btn btn-secondary my-2" th:href="@{/admin/studentManage}">manage student</a>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"

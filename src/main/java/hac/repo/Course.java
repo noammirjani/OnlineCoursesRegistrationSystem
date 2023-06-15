@@ -5,10 +5,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
-import org.springframework.data.relational.core.sql.In;
+import jakarta.validation.constraints.*;
+
 
 import java.io.Serializable;
 
@@ -22,30 +20,39 @@ public class Course implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty(message = "Course Code is mandatory")
-    @PositiveOrZero(message = "Payment must be positive or zero")
+    @NotNull(message = "Course Code is required")
+    @Min(value = 0, message = "Course Code cannot be negative")
     private Integer courseCode;
 
-    @NotEmpty(message = "Course name is mandatory")
+    @NotEmpty(message = "Course Name is required")
+    @Pattern(regexp="^[a-zA-Z0-9 ]+$", message="Course Name cannot contain special characters")
     private String courseName;
 
-    @NotEmpty(message = "Semester is mandatory")
-    private String semester;
+    @NotNull(message = "Num of semesters is required")
+    @Min(value = 1, message = "Num of semesters must be at least 1")
+    @Max(value = 3, message = "Num of semesters must be at most 3")
+    private Integer semester;
 
-    @PositiveOrZero(message = "Capacity must be positive or zero")
-    private Integer capacity = 0;
+    @NotNull(message = "Capacity must be positive or zero")
+    @Max(value = 100, message = "Capacity must be at most 100")
+    private Integer capacity;
 
     @NotEmpty(message = "Professor name is mandatory")
+    @Pattern(regexp="^[a-zA-Z ]+$", message="Professor name can contain only letters")
     private String professor;
 
-    @Positive(message = "Year must be positive")
-    private Integer year = 0;
+    @NotNull(message = "Year is required")
+    @Min(value = 2000, message = "Year must be at least 2000")
+    @Max(value = 2023, message = "Year must be at most 2023")
+    private Integer year;
 
     @NotEmpty(message = "Overview text is mandatory")
+    @Size(max = 255, message = "Overview text must be less than 500 characters")
     private String overview;
 
-    public Course(Integer courseCode, String courseName, String semester,
-                  Integer capacity, String professor, Integer year) {
+
+    public Course(Integer courseCode, String courseName, Integer semester,
+                  Integer capacity, String professor, Integer year, String overview) {
         this.courseCode = courseCode;
         this.courseName = courseName;
         this.semester = semester;
@@ -54,38 +61,27 @@ public class Course implements Serializable {
         this.year = year;
         this.overview = overview;
     }
-
-    public Course() {
-
-    }
+    
+    public Course() {}
 
     // getters and setters
-    public Long getId() {
-        return id;
-    }
-
+    public Long getId() {return id;}
     public Integer getCourseCode() {
         return courseCode;
     }
-
     public String getCourseName() {
         return courseName;
     }
-
-    public String getSemester() {
+    public Integer getSemester() {
         return semester;
     }
-
     public Integer getCapacity() {
         return capacity;
     }
-
     public String getProfessor() {
         return professor;
     }
-
     public String getOverview() {return overview;}
-
     public Integer getYear() {
         return year;
     }
@@ -93,33 +89,38 @@ public class Course implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-
     public void setCourseCode(Integer courseCode) {
         this.courseCode=courseCode;
     }
-
     public void setCourseName(String courseName) {
         this.courseName=courseName;
     }
-
-    public void setSemester(String semester) {
-        this.semester=semester;
-    }
-
+    public void setSemester(Integer semester) {this.semester=semester;}
     public void  setCapacity( Integer capacity) {
         this.capacity=capacity;
     }
-
     public void setProfessor(String professor) {
         this.professor=professor;
     }
-
     public void setYear(Integer year) {
         this.year=year;
     }
-
     public void setOverview(String overview) {
         this.overview=overview;
+    }
+
+    @Override
+    public String toString() {
+           return "Course{" +
+                    "id=" + id +
+                    ", courseCode=" + courseCode +
+                    ", courseName='" + courseName + '\'' +
+                    ", semester=" + semester +
+                    ", capacity=" + capacity +
+                    ", professor='" + professor + '\'' +
+                    ", year=" + year +
+                    ", overview='" + overview + '\'' +
+                    '}';
     }
 }
 

@@ -2,30 +2,111 @@ package hac.controllers;
 
 import hac.repo.Course;
 import hac.repo.CourseRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import jakarta.validation.Valid;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import java.security.Principal;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
 
-/** this is a test controller, delete/replace it when you start working on your project */
 @Controller
 public class MainController {
+  //  private static Logger logger = LoggerFactory.getLogger(MainController.class);
 
-    private static Logger logger = LoggerFactory.getLogger(MainController.class);
     @Autowired
     private CourseRepository repository;
 
-    @RequestMapping("/")
+    //------------------- admin urls -------------------
+    @GetMapping("/admin")
+    public String adminIndex() {
+        return "admin/index";
+    }
+
+    @GetMapping("/admin/coursesManage")
+    public String adminCourses(Model model) {
+        Iterable<Course> courses = repository.findAll();
+        model.addAttribute("courses", courses);
+        return "admin/coursesManage";
+    }
+
+    @GetMapping("/admin/coursesManage/addCourse")
+    public String adminAddCourseGet(Course course, Model model) {
+        model.addAttribute("course", course);
+        return "admin/addCourse";
+    }
+
+    @PostMapping("/admin/coursesManage/addCourse")
+    public String adminAddCoursePost(@Valid Course course, BindingResult result, Model model) {
+        if (result.hasErrors()){
+            System.out.println("validation errors: " + result.getAllErrors());
+            return "admin/addCourse";
+        }
+
+        repository.save(course);
+        model.addAttribute("addedCourse", true);
+        model.addAttribute("courses", repository.findAll());
+        return "admin/coursesManage";
+    }
+
+    @PostMapping("/admin/coursesManage/deleteCourse/{id}")
+    public String adminDeleteCourse(@PathVariable("id") long id, Model model) {
+        Course course = repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid course Id:" + id));
+        repository.delete(course);
+        model.addAttribute("courses", repository.findAll());
+        return "admin/coursesManage";
+    }
+
+    @GetMapping("/admin/coursesManage/editCourse/{id}")
+    public String adminEditCourseGet(@PathVariable("id") long id, Model model) {
+        Course course = repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid course Id:" + id));
+        model.addAttribute("course", course);
+        return "admin/editCourse";
+    }
+
+    @PostMapping("/admin/coursesManage/editCourse/{id}")
+    public String adminEditCoursePost(@Valid Course course, BindingResult result, Model model) {
+        if (result.hasErrors()){
+            System.out.println("validation errors: " + result.getAllErrors());
+            return "admin/addCourse";
+        }
+
+        // Get the existing course from the database.
+        Course existingCourse = repository.findById(course.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid course Id:" + course.getId()));
+
+        // Update the properties of the existing course.
+        existingCourse.setCourseCode(course.getCourseCode());
+        existingCourse.setCourseName(course.getCourseName());
+        existingCourse.setProfessor(course.getProfessor());
+        existingCourse.setYear(course.getYear());
+        existingCourse.setSemester(course.getSemester());
+        existingCourse.setCapacity(course.getCapacity());
+        existingCourse.setOverview(course.getOverview());
+
+        // Save the updated course back to the database.
+        repository.save(existingCourse);
+
+        model.addAttribute("editedCourse", true);
+        model.addAttribute("courses", repository.findAll());
+        return "admin/coursesManage";
+    }
+
+
+    //------------------- user urls --------------------
+    @GetMapping("/user")
+    public String userIndex() {
+        return "user/index";
+    }
+
+
+    //------------------ get request to menu items --------------------
+    @GetMapping("/")
     public String index() {  // add Principal principal to argument to show loged user details
         return "index";
     }
@@ -35,39 +116,20 @@ public class MainController {
         return "login";
     }
 
+
+    @GetMapping("/courses")
+    public String main(Model model) {
+        model.addAttribute("coursesData", repository.findAll());
+        return "courses";
+    }
+
     @GetMapping("/about-Us")
     public String register() {
         return "about-Us";
     }
 
-@GetMapping("/courses")
-public String main(Model model) {
-    model.addAttribute("coursesData", repository.findAll());
-    return "courses";
-}
 
-    @RequestMapping("/user")
-    public String userIndex() {
-        return "user/index";
-    }
-
-    @RequestMapping("/admin")
-    public String adminIndex() {
-        return "admin/index";
-    }
-
-    @RequestMapping("/admin/coursesManage")
-    public String adminCourses(Model model) {
-        Iterable<Course> courses = repository.findAll();
-        model.addAttribute("courses", courses);
-        return "admin/coursesManage";
-    }
-
-    @RequestMapping("/403")
-    public String forbidden() {
-        return "403";
-    }
-
+    //-------------------- error handling --------------------
     @ExceptionHandler({Exception.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public String handleException(Exception ex, Model model) {
@@ -79,7 +141,12 @@ public String main(Model model) {
         return "error";
     }
 
-    @RequestMapping("/errorpage")
+    @GetMapping("/403")
+    public String forbidden() {
+        return "403";
+    }
+
+    @GetMapping("/errorpage")
     public String error(Exception ex, Model model) {
         model.addAttribute("errorMessage", ex.getMessage());
         return "error";
