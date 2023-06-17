@@ -4,8 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
+
+import jakarta.validation.constraints.*;
 
 import java.io.Serializable;
 
@@ -26,13 +26,15 @@ public class CourseRegistration implements Serializable {
     @Size(max = 100, message = "Student Name must be no more than 100 characters")
     private String student;
 
-    public CourseRegistration (){}
-
     public CourseRegistration (String courseName, String student){
         this.courseName = courseName;
         this.student = student;
 
     }
+
+    public CourseRegistration (){}
+    public Long getId() {return id;}
+
 
     public String getCourseName() {
         return courseName;
@@ -40,6 +42,10 @@ public class CourseRegistration implements Serializable {
 
     public String getStudent() {
         return student;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void setStudent(String student) {

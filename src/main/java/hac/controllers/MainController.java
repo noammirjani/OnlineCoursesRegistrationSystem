@@ -4,7 +4,10 @@ import hac.repo.course.Course;
 import hac.repo.course.CourseRepository;
 import hac.repo.coursesRegistrations.CourseRegistration;
 import hac.repo.coursesRegistrations.CourseRegistrationRepository;
-
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import jakarta.validation.Valid;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
@@ -16,6 +19,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 
+
+
 @Controller
 public class MainController {
   //  private static Logger logger = LoggerFactory.getLogger(MainController.class);
@@ -24,26 +29,22 @@ public class MainController {
     private CourseRepository repository;
 
     @Autowired
-    private CourseRegistrationRepository rgistretionRepository;
+    private CourseRegistrationRepository registrationRepository;
 
     //------------------- admin urls -------------------
+
     @GetMapping("/admin")
     public String adminIndex() {
         return "admin/index";
     }
+
+    //-------- admin manage courses --------------------
 
     @GetMapping("/admin/coursesManage")
     public String adminCourses(Model model) {
         Iterable<Course> courses = repository.findAll();
         model.addAttribute("courses", courses);
         return "admin/coursesManage";
-    }
-
-    @GetMapping("/admin/coursesRegistrationManage")
-    public String adminCoursesRegistration (Model model) {
-        Iterable<CourseRegistration> courseRegistration = rgistretionRepository.findAll();
-        model.addAttribute("courseRegistration", courseRegistration);
-        return "admin/coursesRegistrationManage";
     }
 
     @GetMapping("/admin/coursesManage/addCourse")
@@ -109,11 +110,91 @@ public class MainController {
         model.addAttribute("courses", repository.findAll());
         return "admin/coursesManage";
 
-
-
-
     }
 
+    //-------- admin manage Registrations (students) --------------------
+
+    private List<String> getUniqueCourseNames(Iterable<CourseRegistration> courseRegistration) {
+        List<String> uniqueCourseNames = new ArrayList<>();
+        courseRegistration.forEach(registration -> uniqueCourseNames.add(registration.getCourseName()));
+        Set<String> uniqueCourseNameSet = new HashSet<>(uniqueCourseNames);
+        return new ArrayList<>(uniqueCourseNameSet);
+    }
+
+    private List<String> getStudentsNames(Iterable<CourseRegistration> courseRegistration) {
+        List<String> studentsNames = new ArrayList<>();
+        courseRegistration.forEach(registration -> studentsNames.add(registration.getStudent()));
+        return studentsNames;
+    }
+
+
+    @GetMapping("/admin/coursesRegistrationManage")
+    public String adminCoursesRegistration (Model model) {
+
+        //Iterable<CourseRegistration> courseRegistration = registrationRepository.findAll();
+
+        model.addAttribute("courses", getUniqueCourseNames(registrationRepository.findAll()));
+        model.addAttribute("students", getStudentsNames(registrationRepository.findAll()));
+        model.addAttribute("filteredData", registrationRepository.findAll());
+        return "admin/coursesRegistrationManage";
+    }
+
+    @PostMapping("/admin/coursesRegistrationManage/deleteRegistration/{id}")
+    public String adminDeleteRegistration(@PathVariable("id") long id, Model model) {
+        CourseRegistration registration = registrationRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid course Id:" + id));
+        registrationRepository.delete(registration);
+
+        model.addAttribute("courses", getUniqueCourseNames(registrationRepository.findAll()));
+        model.addAttribute("students", getStudentsNames(registrationRepository.findAll()));
+        model.addAttribute("filteredData", registrationRepository.findAll());
+        model.addAttribute("registrationDeleted", true);
+        return "admin/coursesRegistrationManage";
+    }
+
+    @PostMapping("/admin/coursesRegistrationManage/removeAllRegistration")
+    public String adminDeleteAllRegistration(Model model) {
+
+        registrationRepository.deleteAll();
+//        model.addAttribute("courses", getUniqueCourseNames(registrationRepository.findAll()));
+//        model.addAttribute("students", getStudentsNames(registrationRepository.findAll()));
+//        model.addAttribute("filteredData", registrationRepository.findAll());
+        model.addAttribute("filteredData", registrationRepository.findAll());
+        model.addAttribute("removeAllRegistrations", true);
+        return "admin/coursesRegistrationManage";
+    }
+
+    @PostMapping("/admin/coursesRegistrationManage/search")
+    public String adminSearchRegistration(@RequestParam("courseName") String courseName,
+                                          @RequestParam("studentName") String student,
+                                          Model model) {
+        List<CourseRegistration> registration = null;
+
+        if (!courseName.equals("") && !student.equals("") ){
+             registration = registrationRepository.findByCourseNameAndAndStudent(courseName, student);
+        } else if (courseName.equals("") && !student.equals("") ) {
+            registration = registrationRepository.findByStudent(student);
+        }
+        else if (!courseName.equals("") && student.equals("") ){
+            registration = registrationRepository.findByCourseName(courseName);
+        }
+        else {
+            registration = registrationRepository.findAll();
+        }
+
+        if(registration.size() == 0)
+            model.addAttribute("noSearchResult", true);
+        else
+            model.addAttribute("noSearchResult", false);
+
+                model.addAttribute("courses", getUniqueCourseNames(registrationRepository.findAll()));
+        model.addAttribute("students", getStudentsNames(registrationRepository.findAll()));
+        model.addAttribute("filteredData", registration);
+        return "admin/coursesRegistrationManage";
+    }
+
+
+    ///****************************************************************************************
 
     //------------------- user urls --------------------
     @GetMapping("/user")

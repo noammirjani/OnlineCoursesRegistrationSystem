@@ -2,6 +2,9 @@ package hac.repo.coursesRegistrations;
 
 import hac.repo.coursesRegistrations.CourseRegistration;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+
 public interface CourseRegistrationRepository extends JpaRepository<CourseRegistration, Long>{
 
     /** SOME EXAMPLES:
@@ -9,7 +12,9 @@ public interface CourseRegistrationRepository extends JpaRepository<CourseRegist
      *  Spring will implement the method for us based on the method name
      *  https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods
      */
-//    List<Course> findByUserName(String userName);
+      List <CourseRegistration> findByCourseNameAndAndStudent(String courseName, String student);
+      List <CourseRegistration> findByStudent(String student);
+      List <CourseRegistration> findByCourseName( String courseName);
 //    List<Course> findUserByUserName(String userName);
 //    List<Course> findByEmail(String email);
 //    List<Course> findByUserNameAndEmail(String userName, String email);

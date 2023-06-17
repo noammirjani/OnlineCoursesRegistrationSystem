@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100" data-bs-theme="auto" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <title>OCM</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/css/login.css}" />
+</head>
+<body>
+
+<header class="py-4 border-bottom">
+    <div class="container-fluid">
+        <div class="flex-shrink-0 dropdown  position-absolute start-50 top-0 mt-2 ">
+            <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle " data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="https://cdn-icons-png.flaticon.com/512/4205/4205906.png" alt="mdo" width="32" height="32" class="rounded-circle border">
+            </a>
+            <ul class="dropdown-menu text-small shadow text-center" style="">
+                <li> Hello! </li>
+                <li>username: <span sec:authentication="name"></span></li>
+                <li>roll: admin</li>
+                <li> <form th:action="@{/logout}" method="post" style="display:inline">
+                    <input type="submit" value="Logout" class="btn btn-sm btn-primary my-2"/>
+                </form></li>
+            </ul>
+        </div>
+    </div>
+</header>
+<main class="container">
+    <div class="row">
+        <div class="col col-md-8 intro">
+            <section class="py-5 text-center container">
+                <div class="row py-lg-5">
+                    <div class="col-lg-8 col-md-8 mx-auto">
+                        <h1 class="fw-light">Courses Registrations Manager</h1>
+
+                        <p class="lead text-body-secondary">
+                            Welcome Back <span sec:authentication="name"></span>! <br/>
+                            On this page, you have the following options:<br/>
+                            Delete students registrations for various courses. <br>
+                            Feel free to navigate through the available options and manage the course database according
+                            to your needs.
+                        </p>
+                        <div>
+                            <form th:action="@{/logout}" method="post" style="display:inline">
+                                <input type="submit" value="Logout" class="btn btn-primary my-2"/>
+                            </form>
+                            <a class="btn btn-secondary my-2" th:href="@{/admin}">home</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div class="col d-none d-md-block d-flex justify-content-center align-items-center mt-5">
+            <img src="https://img.freepik.com/free-vector/hand-drawn-flat-design-stack-books-illustration_23-2149341898.jpg"
+                 alt="Circular Image" class="rounded-circle w-75 h-75">
+        </div>
+    </div>
+
+    <div th:if="${registrationDeleted}">
+        <div class="alert alert-success text-center" role="alert">
+            Registration removed successfully!
+        </div>
+    </div>
+
+    <div th:if="${removeAllRegistrations}">
+        <div class="alert alert-success text-center" role="alert">
+            All Registrations have been removed successfully!
+        </div>
+    </div>
+
+    <div class="row mb-5 text-center">
+        <form class="row gx-3 gy-2 align-items-center" th:action="@{'/admin/coursesRegistrationManage/search'}" method="post">
+            <div class="col-sm-3">
+                <label class="visually-hidden" for="courseName">Course NAme</label>
+                <select class="form-control" id="courseName" name="courseName">
+                    <option selected value="">Choose...</option>
+                    <option th:each="course: ${courses}" th:value="${course}" th:text="${course}"></option>
+                </select>
+            </div>
+            <div class="col-sm-3">
+                <label class="visually-hidden" for="studentName">Student</label>
+                <select class="form-control" id="studentName"  name="studentName">
+                    <option selected value="">Choose...</option>
+                    <option th:each="student: ${students}" th:value="${student}" th:text="${student}"></option>
+                </select>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">search</button>
+            </div>
+        </form>
+    </div>
+
+    <div th:if="${noSearchResult}">
+        <div class="alert alert-danger text-center" role="alert">
+            There is no result for this search!
+        </div>
+    </div>
+
+    <div th:if="${#lists.size(filteredData) > 0}" class="container mb-5 text-center">
+        <div class="table-responsive" >
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th scope="col">Course Name</th>
+                    <th scope="col">Student Name</th>
+                    <th scope="col"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="registeration: ${filteredData}">
+                    <td class="text-justify" th:text="${registeration.courseName}"></td>
+                    <td class="text-justify" th:text="${registeration.student}"></td>
+                    <td>
+                        <form th:action="@{'/admin/coursesRegistrationManage/deleteRegistration/' + ${registeration.id}}" method="post">
+                            <button type="submit" class="btn btn-outline-danger my-2">delete</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <a class="btn btn-outline-success my-2 mb-5" th:href="@{/admin/coursesRegistrationManage/removeAllRegistration}"> Remove all</a>
+        </div>
+    </div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous">
+</script>
+</body>
+</html>
