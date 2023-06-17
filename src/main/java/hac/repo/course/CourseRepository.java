@@ -1,4 +1,4 @@
-package hac.repo;
+package hac.repo.course;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

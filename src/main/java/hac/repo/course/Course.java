@@ -1,4 +1,4 @@
-package hac.repo;
+package hac.repo.course;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -25,7 +25,8 @@ public class Course implements Serializable {
     private Integer courseCode;
 
     @NotEmpty(message = "Course Name is required")
-    @Pattern(regexp="^[a-zA-Z0-9 ]+$", message="Course Name cannot contain special characters")
+    //@Pattern(regexp="^[a-zA-Z0-9 ]+$", message="Course Name cannot contain special characters")
+    @Size(max = 50, message = "Course Name must be no more than 50 characters")
     private String courseName;
 
     @NotNull(message = "Num of semesters is required")
@@ -35,6 +36,7 @@ public class Course implements Serializable {
 
     @NotNull(message = "Capacity must be positive or zero")
     @Max(value = 100, message = "Capacity must be at most 100")
+    @Min(value = 1, message = "Capacity must be at least 1")
     private Integer capacity;
 
     @NotEmpty(message = "Professor name is mandatory")

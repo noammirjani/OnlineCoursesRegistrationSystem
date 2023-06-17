@@ -1,7 +1,10 @@
 package hac.controllers;
 
-import hac.repo.Course;
-import hac.repo.CourseRepository;
+import hac.repo.course.Course;
+import hac.repo.course.CourseRepository;
+import hac.repo.coursesRegistrations.CourseRegistration;
+import hac.repo.coursesRegistrations.CourseRegistrationRepository;
+
 import jakarta.validation.Valid;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
@@ -20,6 +23,9 @@ public class MainController {
     @Autowired
     private CourseRepository repository;
 
+    @Autowired
+    private CourseRegistrationRepository rgistretionRepository;
+
     //------------------- admin urls -------------------
     @GetMapping("/admin")
     public String adminIndex() {
@@ -31,6 +37,13 @@ public class MainController {
         Iterable<Course> courses = repository.findAll();
         model.addAttribute("courses", courses);
         return "admin/coursesManage";
+    }
+
+    @GetMapping("/admin/coursesRegistrationManage")
+    public String adminCoursesRegistration (Model model) {
+        Iterable<CourseRegistration> courseRegistration = rgistretionRepository.findAll();
+        model.addAttribute("courseRegistration", courseRegistration);
+        return "admin/coursesRegistrationManage";
     }
 
     @GetMapping("/admin/coursesManage/addCourse")
@@ -95,6 +108,10 @@ public class MainController {
         model.addAttribute("editedCourse", true);
         model.addAttribute("courses", repository.findAll());
         return "admin/coursesManage";
+
+
+
+
     }
 
 
