@@ -1,23 +1,17 @@
 package hac.repo.coursesRegistrations;
 
-import hac.repo.coursesRegistrations.CourseRegistration;
+import hac.repo.course.Course;
 import org.springframework.data.jpa.repository.JpaRepository;
-
+import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface CourseRegistrationRepository extends JpaRepository<CourseRegistration, Long>{
 
-    /** SOME EXAMPLES:
-     *  defining some queries using the method names
-     *  Spring will implement the method for us based on the method name
-     *  https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods
-     */
-      List <CourseRegistration> findByCourseNameAndAndStudent(String courseName, String student);
+      List <CourseRegistration> findByCourseNameAndStudent(String courseName, String student);
       List <CourseRegistration> findByStudent(String student);
       List <CourseRegistration> findByCourseName( String courseName);
-//    List<Course> findUserByUserName(String userName);
-//    List<Course> findByEmail(String email);
-//    List<Course> findByUserNameAndEmail(String userName, String email);
-//    List<Course> findFirst10ByOrderByUserNameDesc(); // find first 10 users ordered by userName desc
+
+     @Query("SELECT c FROM Course c JOIN CourseRegistration cr ON c.courseName = cr.courseName WHERE cr.student = :studentName")
+     List<Course> findCoursesByStudent(String studentName);
 
 }
