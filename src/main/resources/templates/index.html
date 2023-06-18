@@ -17,9 +17,7 @@
                         </form>
                     </div>
                     <div th:unless="${#authorization.expression('isAuthenticated()')}">
-                        <form th:action="@{/login}" method="post" style="display:inline">
-                            <input type="submit" value="login" class="btn btn-light mx-5"/>
-                        </form>
+                        <a class="btn btn-light mx-5" th:href="@{/login}">Login</a>
                     </div>
                 </div>
             </nav>

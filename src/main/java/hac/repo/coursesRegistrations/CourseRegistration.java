@@ -22,7 +22,6 @@ public class CourseRegistration implements Serializable {
     private String courseName;
 
     @NotEmpty(message = "Course Name is required")
-    //@Pattern(regexp="^[a-zA-Z0-9 ]+$", message="Course Name cannot contain special characters")
     @Size(max = 100, message = "Student Name must be no more than 100 characters")
     private String student;
 
