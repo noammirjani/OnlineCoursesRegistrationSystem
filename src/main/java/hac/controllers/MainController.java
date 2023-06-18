@@ -40,12 +40,6 @@ public class MainController {
         return "admin/coursesManage";
     }
 
-//    @GetMapping("/admin/coursesRegistrationManage")
-//    public String adminCoursesRegistration (Model model) {
-//        Iterable<CourseRegistration> courseRegistration = registrationRepository.findAll();
-//        model.addAttribute("courseRegistration", courseRegistration);
-//        return "admin/coursesRegistrationManage";
-//    }
 
     @GetMapping("/admin/coursesRegistrationManage")
     public String adminCoursesRegistration (Model model) {
@@ -71,7 +65,13 @@ public class MainController {
             return "admin/addCourse";
         }
 
-        repository.save(course);
+        try{
+            repository.save(course);
+        } catch (Exception e) {
+            model.addAttribute("error", "Course already exists");
+            return "admin/addCourse";
+        }
+
         model.addAttribute("addedCourse", true);
         model.addAttribute("courses", repository.findAll());
         return "admin/coursesManage";
@@ -115,7 +115,12 @@ public class MainController {
         existingCourse.setOverview(course.getOverview());
 
         // Save the updated course back to the database.
-        repository.save(existingCourse);
+        try{
+            repository.save(course);
+        } catch (Exception e) {
+            model.addAttribute("error", "Course already exists");
+            return "admin/editCourse";
+        }
 
         model.addAttribute("editedCourse", true);
         model.addAttribute("courses", repository.findAll());
