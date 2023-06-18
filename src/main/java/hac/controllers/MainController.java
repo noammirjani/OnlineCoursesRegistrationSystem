@@ -9,21 +9,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import jakarta.validation.Valid;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 
-
-
 @Controller
 public class MainController {
-  //  private static Logger logger = LoggerFactory.getLogger(MainController.class);
 
     @Autowired
     private CourseRepository repository;
@@ -32,19 +29,33 @@ public class MainController {
     private CourseRegistrationRepository registrationRepository;
 
     //------------------- admin urls -------------------
-
     @GetMapping("/admin")
     public String adminIndex() {
         return "admin/index";
     }
 
-    //-------- admin manage courses --------------------
-
     @GetMapping("/admin/coursesManage")
     public String adminCourses(Model model) {
-        Iterable<Course> courses = repository.findAll();
-        model.addAttribute("courses", courses);
+        model.addAttribute("courses", repository.findAll());
         return "admin/coursesManage";
+    }
+
+//    @GetMapping("/admin/coursesRegistrationManage")
+//    public String adminCoursesRegistration (Model model) {
+//        Iterable<CourseRegistration> courseRegistration = registrationRepository.findAll();
+//        model.addAttribute("courseRegistration", courseRegistration);
+//        return "admin/coursesRegistrationManage";
+//    }
+
+    @GetMapping("/admin/coursesRegistrationManage")
+    public String adminCoursesRegistration (Model model) {
+
+        //Iterable<CourseRegistration> courseRegistration = registrationRepository.findAll();
+
+        model.addAttribute("courses", getUniqueCourseNames(registrationRepository.findAll()));
+        model.addAttribute("students", getStudentsNames(registrationRepository.findAll()));
+        model.addAttribute("filteredData", registrationRepository.findAll());
+        return "admin/coursesRegistrationManage";
     }
 
     @GetMapping("/admin/coursesManage/addCourse")
@@ -109,7 +120,6 @@ public class MainController {
         model.addAttribute("editedCourse", true);
         model.addAttribute("courses", repository.findAll());
         return "admin/coursesManage";
-
     }
 
     //-------- admin manage Registrations (students) --------------------
@@ -127,17 +137,6 @@ public class MainController {
         return studentsNames;
     }
 
-
-    @GetMapping("/admin/coursesRegistrationManage")
-    public String adminCoursesRegistration (Model model) {
-
-        //Iterable<CourseRegistration> courseRegistration = registrationRepository.findAll();
-
-        model.addAttribute("courses", getUniqueCourseNames(registrationRepository.findAll()));
-        model.addAttribute("students", getStudentsNames(registrationRepository.findAll()));
-        model.addAttribute("filteredData", registrationRepository.findAll());
-        return "admin/coursesRegistrationManage";
-    }
 
     @PostMapping("/admin/coursesRegistrationManage/deleteRegistration/{id}")
     public String adminDeleteRegistration(@PathVariable("id") long id, Model model) {
@@ -171,7 +170,7 @@ public class MainController {
         List<CourseRegistration> registration = null;
 
         if (!courseName.equals("") && !student.equals("") ){
-             registration = registrationRepository.findByCourseNameAndAndStudent(courseName, student);
+             registration = registrationRepository.findByCourseNameAndStudent(courseName, student);
         } else if (courseName.equals("") && !student.equals("") ) {
             registration = registrationRepository.findByStudent(student);
         }
@@ -187,7 +186,7 @@ public class MainController {
         else
             model.addAttribute("noSearchResult", false);
 
-                model.addAttribute("courses", getUniqueCourseNames(registrationRepository.findAll()));
+        model.addAttribute("courses", getUniqueCourseNames(registrationRepository.findAll()));
         model.addAttribute("students", getStudentsNames(registrationRepository.findAll()));
         model.addAttribute("filteredData", registration);
         return "admin/coursesRegistrationManage";
@@ -202,12 +201,101 @@ public class MainController {
         return "user/index";
     }
 
+    @GetMapping("/user/coursesRegistration")
+    public String userCoursesRegistration(Model model) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userName = authentication.getName();
+
+        model.addAttribute("courses", repository.findAll());
+
+        List<String> ownedCourseNames = new ArrayList<>();
+        for (CourseRegistration cr : registrationRepository.findByStudent(userName)) {
+            ownedCourseNames.add(cr.getCourseName());
+        }
+
+        model.addAttribute("ownedCourses",ownedCourseNames );
+
+        return "user/coursesRegistration";
+    }
+
+    @PostMapping("/user/coursesRegistration/addCourse/{id}")
+    public String userCoursesRegistrationPost(@PathVariable("id") long id, Model model) {
+
+        Course course = repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid course Id:" + id));
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userName = authentication.getName();
+
+        CourseRegistration cr = new CourseRegistration(course.getCourseName(), userName);
+        registrationRepository.save(cr);
+
+        model.addAttribute("courses", repository.findAll());
+        model.addAttribute("scheduleChange", course.getCourseName() + " added to your schedule.");
+
+        List<String> ownedCourseNames = new ArrayList<>();
+        for (CourseRegistration crr : registrationRepository.findByStudent(userName)) {
+            ownedCourseNames.add(crr.getCourseName());
+        }
+
+        model.addAttribute("ownedCourses", ownedCourseNames);
+
+        return "user/coursesRegistration";
+    }
+
+    @PostMapping("/user/coursesRegistration/removeCourse/{id}")
+    public String userDeleteCourse(@PathVariable("id") long id, Model model) {
+        Course course = repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid course Id:" + id));
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userName = authentication.getName();
+
+        CourseRegistration cr = registrationRepository.findByCourseNameAndStudent(course.getCourseName(), userName).get(0);
+        registrationRepository.delete(cr);
+
+        model.addAttribute("courses", repository.findAll());
+        model.addAttribute("scheduleChange", course.getCourseName()+ " removed from your schedule.");
+
+        List<String> ownedCourseNames = new ArrayList<>();
+        for (CourseRegistration crr : registrationRepository.findByStudent(userName)) {
+            ownedCourseNames.add(crr.getCourseName());
+        }
+
+       model.addAttribute("ownedCourses", ownedCourseNames);
+
+        return "user/coursesRegistration";
+    }
+
+    @GetMapping("/user/myCourses")
+    public String userMyCourses(Model model) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userName = authentication.getName();
+
+        model.addAttribute("courses", registrationRepository.findCoursesByStudent(userName));
+        return "user/myCourses";
+    }
+
+    @PostMapping("/user/myCourses/removeCourse/{id}")
+    public String userRemoveCourse(@PathVariable("id") long id, Model model) {
+        Course course = repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid course Id:" + id));
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userName = authentication.getName();
+
+        CourseRegistration cr = registrationRepository.findByCourseNameAndStudent(course.getCourseName(), userName).get(0);
+        registrationRepository.delete(cr);
+
+        model.addAttribute("courses", registrationRepository.findCoursesByStudent(userName));
+        model.addAttribute("scheduleChange", course.getCourseName()+ " removed from your schedule.");
+        return "user/myCourses";
+    }
+
 
     //------------------ get request to menu items --------------------
-//    @GetMapping("/")
-//    public String index() {  // add Principal principal to argument to show loged user details
-//        return "index";
-//    }
     @GetMapping("/")
     public String home(Model model) {
         model.addAttribute("activeMenu", "home");
@@ -251,7 +339,7 @@ public class MainController {
         return "403";
     }
 
-    @GetMapping("/errorpage")
+    @GetMapping("/error-page")
     public String error(Exception ex, Model model) {
         model.addAttribute("errorMessage", ex.getMessage());
         return "error";

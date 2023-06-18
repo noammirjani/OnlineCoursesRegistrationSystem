@@ -1,10 +1,62 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-100" data-bs-theme="auto"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>OCM</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/css/login.css}" />
 </head>
 <body>
-<h1>index user</h1>
+
+<!-- move to fragment -->
+<header class="py-4 border-bottom">
+    <div class="container-fluid">
+        <div class="flex-shrink-0 dropdown  position-absolute start-50 top-0 mt-2 ">
+            <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="https://cdn-icons-png.flaticon.com/512/201/201818.png"
+                     alt="mdo" width="32" height="32" class="rounded-circle border">
+            </a>
+            <ul class="dropdown-menu text-small shadow text-center" style="">
+                <li> Hello! </li>
+                <li>username: <span sec:authentication="name"></span></li>
+                <li>roll: student</li>
+                <li> <form th:action="@{/logout}" method="post" style="display:inline">
+                    <input type="submit" value="Logout" class="btn btn-sm btn-primary my-2"/>
+                </form></li>
+            </ul>
+        </div>
+    </div>
+</header>
+
+<main class="container text-center">
+    <div class="px-4 pt-5 my-5 text-center border-bottom">
+        <h1 class="display-4 fw-bold text-body-emphasis">Welcome, Student!</h1>
+        <div class="col-lg-6 mx-auto mt-5">
+            <p class="lead mb-4">
+                On this page, you have the following options to view, add and remove course!
+                please select the option you want to perform. remember our motto: "Knowledge is power!", although
+                we suggest you to learn one course at a time, you can learn as many courses as you want!
+                Enjoy your learning journey!
+            </p>
+            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                <a class="btn btn-primary my-2" th:href="@{/}"> go to home page </a>
+                <a class="btn btn-primary my-2" th:href="@{/user/coursesRegistration}">register courses</a>
+                <a class="btn btn-primary my-2" th:href="@{/user/myCourses}">manage own courses</a>
+            </div>
+        </div>
+        <div class="container px-5">
+            <img src="https://img.freepik.com/free-vector/academic-excellence-illustration_24877-52355.jpg?w=2000"
+                 class="img-fluid rounded-3 mb-4" alt="Example image" width="700" height="500" loading="lazy">
+        </div>
+    </div>
+
+</main>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous">
+</script>
 </body>
 </html>

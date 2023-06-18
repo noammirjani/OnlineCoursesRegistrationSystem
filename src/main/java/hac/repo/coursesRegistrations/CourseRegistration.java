@@ -55,4 +55,5 @@ public class CourseRegistration implements Serializable {
     public void setCourseName(String courseName) {
         this.courseName = courseName;
     }
+
 }
