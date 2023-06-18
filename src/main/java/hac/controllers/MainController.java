@@ -139,7 +139,8 @@ public class MainController {
     private List<String> getStudentsNames(Iterable<CourseRegistration> courseRegistration) {
         List<String> studentsNames = new ArrayList<>();
         courseRegistration.forEach(registration -> studentsNames.add(registration.getStudent()));
-        return studentsNames;
+        Set<String> uniqueStudentNameSet = new HashSet<>(studentsNames);
+        return new ArrayList<> (uniqueStudentNameSet);
     }
 
 
