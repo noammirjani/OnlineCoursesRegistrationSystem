@@ -161,9 +161,8 @@ public class MainController {
     public String adminDeleteAllRegistration(Model model) {
 
         registrationRepository.deleteAll();
-//        model.addAttribute("courses", getUniqueCourseNames(registrationRepository.findAll()));
-//        model.addAttribute("students", getStudentsNames(registrationRepository.findAll()));
-//        model.addAttribute("filteredData", registrationRepository.findAll());
+        model.addAttribute("courses", getUniqueCourseNames(registrationRepository.findAll()));
+        model.addAttribute("students", getStudentsNames(registrationRepository.findAll()));
         model.addAttribute("filteredData", registrationRepository.findAll());
         model.addAttribute("removeAllRegistrations", true);
         return "admin/coursesRegistrationManage";

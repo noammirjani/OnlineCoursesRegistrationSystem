@@ -120,7 +120,9 @@
                 </tr>
                 </tbody>
             </table>
-            <a class="btn btn-outline-success my-2 mb-5" th:href="@{/admin/coursesRegistrationManage/removeAllRegistration}"> Remove all</a>
+            <form th:action="@{/admin/coursesRegistrationManage/removeAllRegistration}" method="post">
+                <button type="submit" class="btn btn-outline-danger my-2 mb-5">Remove all</button>
+            </form>
         </div>
     </div>
 </main>
