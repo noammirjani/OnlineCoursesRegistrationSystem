@@ -195,7 +195,7 @@ public class MainController {
         List<CourseRegistration> registration = null;
 
         if (!courseName.equals("") && !student.equals("") ){
-             registration = registrationRepository.findByCourseNameAndStudent(courseName, student);
+            registration = registrationRepository.findByCourseNameAndStudent(courseName, student);
         } else if (courseName.equals("") && !student.equals("") ) {
             registration = registrationRepository.findByStudent(student);
         }
@@ -284,18 +284,23 @@ public class MainController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userName = authentication.getName();
 
-        CourseRegistration cr = registrationRepository.findByCourseNameAndStudent(course.getCourseName(), userName).get(0);
-        registrationRepository.delete(cr);
+        try{
+            CourseRegistration cr = registrationRepository.findByCourseNameAndStudent(course.getCourseName(), userName).get(0);
+            registrationRepository.delete(cr);
+
+            model.addAttribute("scheduleChange", course.getCourseName()+ " removed from your schedule.");
+        } catch (Exception e) {
+            model.addAttribute("error", "cannot delete course");
+        }
 
         model.addAttribute("courses", repository.findAll());
-        model.addAttribute("scheduleChange", course.getCourseName()+ " removed from your schedule.");
 
         List<String> ownedCourseNames = new ArrayList<>();
         for (CourseRegistration crr : registrationRepository.findByStudent(userName)) {
             ownedCourseNames.add(crr.getCourseName());
         }
 
-       model.addAttribute("ownedCourses", ownedCourseNames);
+        model.addAttribute("ownedCourses", ownedCourseNames);
 
         return "redirect:/user/coursesRegistration";
     }
