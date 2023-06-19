@@ -3,7 +3,7 @@
 <head th:insert="fragments/head :: head('OCM-EDU Courses View', @{/css/course.css})"></head>
 <body>
 <header class="mb-auto text-center">
-    <div th:insert="fragments/menuBar.html :: menuBar(${activeMenu})"></div>
+    <div th:insert="~{fragments/menuBar.html :: menuBar(${activeMenu})}"></div>
 </header>
 <main>
     <section class="py-5 text-center container">
