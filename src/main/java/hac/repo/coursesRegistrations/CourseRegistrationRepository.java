@@ -11,6 +11,8 @@ public interface CourseRegistrationRepository extends JpaRepository<CourseRegist
       List <CourseRegistration> findByStudent(String student);
       List <CourseRegistration> findByCourseName( String courseName);
 
+      int countByCourseName(String courseName);
+
      @Query("SELECT c FROM Course c JOIN CourseRegistration cr ON c.courseName = cr.courseName WHERE cr.student = :studentName")
      List<Course> findCoursesByStudent(String studentName);
 

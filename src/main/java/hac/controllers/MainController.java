@@ -44,11 +44,11 @@ public class MainController {
     @GetMapping("/admin/coursesRegistrationManage")
     public String adminCoursesRegistration (Model model) {
 
-        //Iterable<CourseRegistration> courseRegistration = registrationRepository.findAll();
+        List<CourseRegistration> allRegistrations = registrationRepository.findAll();
 
-        model.addAttribute("courses", getUniqueCourseNames(registrationRepository.findAll()));
-        model.addAttribute("students", getStudentsNames(registrationRepository.findAll()));
-        model.addAttribute("filteredData", registrationRepository.findAll());
+        model.addAttribute("courses", getUniqueCourseNames(allRegistrations));
+        model.addAttribute("students", getStudentsNames(allRegistrations));
+        model.addAttribute("filteredData", allRegistrations);
         return "admin/coursesRegistrationManage";
     }
 
@@ -60,6 +60,7 @@ public class MainController {
 
     @PostMapping("/admin/coursesManage/addCourse")
     public String adminAddCoursePost(@Valid Course course, BindingResult result, Model model) {
+
         if (result.hasErrors()){
             System.out.println("validation errors: " + result.getAllErrors());
             return "admin/addCourse";
@@ -74,16 +75,20 @@ public class MainController {
 
         model.addAttribute("addedCourse", true);
         model.addAttribute("courses", repository.findAll());
-        return "admin/coursesManage";
+        return "redirect:/admin/coursesManage";
     }
+
 
     @PostMapping("/admin/coursesManage/deleteCourse/{id}")
     public String adminDeleteCourse(@PathVariable("id") long id, Model model) {
+
         Course course = repository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid course Id:" + id));
+
         repository.delete(course);
+
         model.addAttribute("courses", repository.findAll());
-        return "admin/coursesManage";
+        return "redirect:/admin/coursesManage";
     }
 
     @GetMapping("/admin/coursesManage/editCourse/{id}")
@@ -96,6 +101,7 @@ public class MainController {
 
     @PostMapping("/admin/coursesManage/editCourse/{id}")
     public String adminEditCoursePost(@Valid Course course, BindingResult result, Model model) {
+
         if (result.hasErrors()){
             System.out.println("validation errors: " + result.getAllErrors());
             return "admin/addCourse";
@@ -124,11 +130,10 @@ public class MainController {
 
         model.addAttribute("editedCourse", true);
         model.addAttribute("courses", repository.findAll());
-        return "admin/coursesManage";
+        return "redirect:/admin/coursesManage";
     }
 
     //-------- admin manage Registrations (students) --------------------
-
     private List<String> getUniqueCourseNames(Iterable<CourseRegistration> courseRegistration) {
         List<String> uniqueCourseNames = new ArrayList<>();
         courseRegistration.forEach(registration -> uniqueCourseNames.add(registration.getCourseName()));
@@ -146,25 +151,40 @@ public class MainController {
 
     @PostMapping("/admin/coursesRegistrationManage/deleteRegistration/{id}")
     public String adminDeleteRegistration(@PathVariable("id") long id, Model model) {
+
         CourseRegistration registration = registrationRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid course Id:" + id));
-        registrationRepository.delete(registration);
+
+        try {
+            registrationRepository.delete(registration);
+            model.addAttribute("registrationDeleted", true);
+        } catch (Exception e) {
+            model.addAttribute("error", "Registration cannot be deleted");
+            return "admin/editCourse";
+        }
 
         model.addAttribute("courses", getUniqueCourseNames(registrationRepository.findAll()));
         model.addAttribute("students", getStudentsNames(registrationRepository.findAll()));
         model.addAttribute("filteredData", registrationRepository.findAll());
-        model.addAttribute("registrationDeleted", true);
-        return "admin/coursesRegistrationManage";
+        return "redirect:/admin/coursesRegistrationManage";
     }
 
     @PostMapping("/admin/coursesRegistrationManage/removeAllRegistration")
     public String adminDeleteAllRegistration(Model model) {
 
-        registrationRepository.deleteAll();
+        try{
+            registrationRepository.deleteAll();
+            model.addAttribute("registrationDeleted", true);
+
+        } catch (Exception e) {
+            model.addAttribute("error", "cannot delete all registrations");
+            return "admin/editCourse";
+        }
+
         model.addAttribute("courses", getUniqueCourseNames(registrationRepository.findAll()));
         model.addAttribute("students", getStudentsNames(registrationRepository.findAll()));
         model.addAttribute("filteredData", registrationRepository.findAll());
-        model.addAttribute("removeAllRegistrations", true);
+
         return "admin/coursesRegistrationManage";
     }
 
@@ -175,11 +195,11 @@ public class MainController {
         List<CourseRegistration> registration = null;
 
         if (!courseName.equals("") && !student.equals("") ){
-             registration = registrationRepository.findByCourseNameAndStudent(courseName, student);
+            registration = registrationRepository.findByCourseNameAndStudent(courseName, student);
         } else if (courseName.equals("") && !student.equals("") ) {
             registration = registrationRepository.findByStudent(student);
         }
-        else if (!courseName.equals("") && student.equals("") ){
+        else if (!courseName.equals("")){ // && student.equals("")
             registration = registrationRepository.findByCourseName(courseName);
         }
         else {
@@ -194,7 +214,7 @@ public class MainController {
         model.addAttribute("courses", getUniqueCourseNames(registrationRepository.findAll()));
         model.addAttribute("students", getStudentsNames(registrationRepository.findAll()));
         model.addAttribute("filteredData", registration);
-        return "admin/coursesRegistrationManage";
+        return "redirect:/admin/coursesRegistrationManage";
     }
 
 
@@ -233,11 +253,17 @@ public class MainController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userName = authentication.getName();
 
+        if (registrationRepository.countByCourseName(course.getCourseName()) < course.getCapacity()){
+            CourseRegistration cr = new CourseRegistration(course.getCourseName(), userName);
+            registrationRepository.save(cr);
+            model.addAttribute("scheduleChange", course.getCourseName() + " added to your schedule.");
+        }
+        else {
+            model.addAttribute("scheduleChangeFailed", course.getCourseName() + " is full!");
+        }
+
         CourseRegistration cr = new CourseRegistration(course.getCourseName(), userName);
         registrationRepository.save(cr);
-
-        model.addAttribute("courses", repository.findAll());
-        model.addAttribute("scheduleChange", course.getCourseName() + " added to your schedule.");
 
         List<String> ownedCourseNames = new ArrayList<>();
         for (CourseRegistration crr : registrationRepository.findByStudent(userName)) {
@@ -245,8 +271,9 @@ public class MainController {
         }
 
         model.addAttribute("ownedCourses", ownedCourseNames);
+        model.addAttribute("courses", repository.findAll());
 
-        return "user/coursesRegistration";
+        return "redirect:/user/coursesRegistration";
     }
 
     @PostMapping("/user/coursesRegistration/removeCourse/{id}")
@@ -257,20 +284,25 @@ public class MainController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userName = authentication.getName();
 
-        CourseRegistration cr = registrationRepository.findByCourseNameAndStudent(course.getCourseName(), userName).get(0);
-        registrationRepository.delete(cr);
+        try{
+            CourseRegistration cr = registrationRepository.findByCourseNameAndStudent(course.getCourseName(), userName).get(0);
+            registrationRepository.delete(cr);
+
+            model.addAttribute("scheduleChange", course.getCourseName()+ " removed from your schedule.");
+        } catch (Exception e) {
+            model.addAttribute("error", "cannot delete course");
+        }
 
         model.addAttribute("courses", repository.findAll());
-        model.addAttribute("scheduleChange", course.getCourseName()+ " removed from your schedule.");
 
         List<String> ownedCourseNames = new ArrayList<>();
         for (CourseRegistration crr : registrationRepository.findByStudent(userName)) {
             ownedCourseNames.add(crr.getCourseName());
         }
 
-       model.addAttribute("ownedCourses", ownedCourseNames);
+        model.addAttribute("ownedCourses", ownedCourseNames);
 
-        return "user/coursesRegistration";
+        return "redirect:/user/coursesRegistration";
     }
 
     @GetMapping("/user/myCourses")
@@ -285,18 +317,24 @@ public class MainController {
 
     @PostMapping("/user/myCourses/removeCourse/{id}")
     public String userRemoveCourse(@PathVariable("id") long id, Model model) {
+
         Course course = repository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid course Id:" + id));
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userName = authentication.getName();
-
         CourseRegistration cr = registrationRepository.findByCourseNameAndStudent(course.getCourseName(), userName).get(0);
-        registrationRepository.delete(cr);
+
+        try{
+            registrationRepository.delete(cr);
+            model.addAttribute("scheduleChange", course.getCourseName()+ " removed from your schedule.");
+        } catch (Exception e) {
+            model.addAttribute("scheduleChangeFailed", "cannot delete registration");
+        }
 
         model.addAttribute("courses", registrationRepository.findCoursesByStudent(userName));
-        model.addAttribute("scheduleChange", course.getCourseName()+ " removed from your schedule.");
-        return "user/myCourses";
+
+        return "redirect:/user/myCourses";
     }
 
 
@@ -311,7 +349,6 @@ public class MainController {
     public String login() {
         return "login";
     }
-
 
     @GetMapping("/courses")
     public String main(Model model) {
