@@ -27,8 +27,6 @@ body {
     width: 250px;
     height: 400px;
     perspective: 1000px;
-    /*font-family: sans-serif;*/
-    /*margin: 100px; !* Add margin to create gap between cards *!*/
 }
 
 .title {
@@ -72,8 +70,8 @@ body {
 }
 
 .flip-card-back {
-    background: linear-gradient(120deg, rgb(86, 145, 176) 30%, #5079ff 88%,
-    #c4fff6 40%, rgb(160, 204, 255) 78%);
+    background: linear-gradient(120deg, rgb(176, 220, 234) 30%, #5dc7ee 88%,
+    #84caf1 40%, rgb(151, 138, 239) 78%);
     color: #0f0056;
     transform: rotateY(180deg);
 }

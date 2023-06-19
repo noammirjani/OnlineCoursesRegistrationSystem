@@ -1,0 +1,22 @@
+<div th:fragment="navbar(role, icon)" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+  <header class="py-4 border-bottom">
+    <div class="position-absolute start-50 top-0 justify-content-center">
+      <div class="row flex-shrink-0 dropdown col-lg-8 mt-2">
+        <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+          <img th:src="${icon}" alt="mdo" width="32" height="32" class="rounded-circle border">
+        </a>
+        <ul class="dropdown-menu text-small shadow text-center">
+          <li> Hello! </li>
+          <li>username: <span th:text="${#strings.substringBefore(#authentication.principal.username, '@')}"></span></li>
+          <li>email: <span sec:authentication="name"></span></li>
+          <li>role: <span th:text="${role}"></span></li>
+          <li>
+            <form th:action="@{/logout}" method="post" style="display:inline">
+              <input type="submit" value="Logout" class="btn btn-sm btn-primary my-2"/>
+            </form>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </header>
+</div>

@@ -1,16 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" class="h-100" data-bs-theme="auto" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta charset="UTF-8">
-    <title>OCM</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
-    <link rel="stylesheet" th:href="@{/css/login.css}" />
-</head>
+<head th:replace="~{fragments/head :: head('OCM-EDU HOME PAGE', @{/css/login.css})}"></head>
+
 <body>
-
-
 <section class="vh-100">
     <div class="container-fluid h-custom">
         <div class="row d-flex justify-content-center align-items-center h-100">
@@ -24,11 +16,13 @@
                         Invalid username and password.
                     </div>
                 </div>
+
                 <div th:if="${param.logout}">
                     <div class="alert alert-warning text-center" role="alert">
                         You have been logged out.
                     </div>
                 </div>
+
                 <form th:action="@{/login}" method="post">
                     <!-- username input -->
                     <div class="form-outline mb-4">
