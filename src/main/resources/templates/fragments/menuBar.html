@@ -1,5 +1,3 @@
-
-
 <div th:fragment="menuBar(menu)" class="container-fluid"
      th:classappend="${menu != 'home'? 'bg-dark p-3' :'' }">
     <h3 class="float-md-start mb-0"><a class="navbar-brand fw-bold text-light" th:href="@{/}">OCM-EDU</a></h3>
@@ -14,31 +12,8 @@
                 </form>
             </div>
             <div th:unless="${#authorization.expression('isAuthenticated()')}">
-                <form th:action="@{/login}" method="post" style="display:inline">
-                    <input type="submit" value="login" class="btn btn-light mx-5"/>
-                </form>
+                <a class="btn btn-light mx-5" th:href="@{/login}">login</a>
             </div>
         </div>
     </nav>
 </div>
-
-<!--<div class="container-fluid bg-dark p-3">-->
-<!--    <h3 class="float-md-start mb-0"><a class="navbar-brand fw-bold text-light" th:href="@{/}">OCM-EDU</a></h3>-->
-<!--    <nav class="nav nav-masthead justify-content-center">-->
-<!--        <a class="nav-link fw-bold py-1 px-0" aria-current="page" th:href="@{/}">Home</a>-->
-<!--        <a class="nav-link fw-bold py-1 px-0 active"  th:href="@{/courses}">Courses</a>-->
-<!--        <a class="nav-link fw-bold py-1 px-0" th:href="@{/about-us}">About-Us</a>-->
-<!--        <div class="login-logout">-->
-<!--            <div th:if="${#authorization.expression('isAuthenticated()')}">-->
-<!--                <form th:action="@{/logout}" method="post" style="display:inline">-->
-<!--                    <input type="submit" value="Logout" class="btn btn-light mx-5"/>-->
-<!--                </form>-->
-<!--            </div>-->
-<!--            <div th:unless="${#authorization.expression('isAuthenticated()')}">-->
-<!--                <form th:action="@{/login}" method="post" style="display:inline">-->
-<!--                    <input type="submit" value="login" class="btn btn-light mx-5"/>-->
-<!--                </form>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </nav>-->
-<!--</div>-->

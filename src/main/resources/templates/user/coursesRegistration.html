@@ -66,6 +66,9 @@
   <div th:if="${scheduleChange}">
     <div class="alert alert-success text-center" role="alert" th:text="${scheduleChange}"></div>
   </div>
+  <div th:if="${scheduleChangeFailed}">
+    <div class="alert alert-warning text-center" role="alert" th:text="${scheduleChangeFailed}"></div>
+  </div>
 
   <div class="container mb-5 text-center">
     <div class="table-responsive" >
