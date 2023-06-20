@@ -1,0 +1,9 @@
+<th:block th:fragment="selectInput (list, id, name)">
+  <div class="col-sm-3">
+    <label class="visually-hidden" for="id">Name</label>
+    <select class="form-control" id="id" name="name">
+      <option selected value="">Choose...</option>
+      <option th:each="item: ${list}" th:value="${item}" th:text="${item}"></option>
+    </select>
+  </div>
+</th:block>

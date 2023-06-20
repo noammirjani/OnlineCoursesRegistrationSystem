@@ -1,70 +1,25 @@
 <!DOCTYPE html>
 <html lang="en" class="h-100" data-bs-theme="auto" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/head :: head('OCM-EDU ADMIN PAGE', @{/css/register.css})}"></head>
-
+<body class="d-flex flex-column h-100">
 <header th:replace="~{fragments/adminNavbar :: navbar('admin', 'https://cdn-icons-png.flaticon.com/512/4205/4205906.png')}"></header>
 <main class="container">
-  <div class="row">
-    <div class="col col-md-8 intro">
-      <section class="py-5 text-center container">
-        <div class="row py-lg-5">
-          <div class="col-lg-8 col-md-8 mx-auto">
-            <h1 class="fw-light"> Courses Manage</h1>
-            <p class="lead text-body-secondary">
-              Welcome Back <span th:text="${#strings.substringBefore(#authentication.principal.username, '@')}"></span>! <br/>
-              On this page, you have the following options:<br/>
-              Add, delete and edit Courses <br>
-              Feel free to navigate through the available options and manage the course database according
-              to your needs.
-            </p>
-            <div>
-              <form th:action="@{/logout}" method="post" style="display:inline">
-                <input type="submit" value="Logout" class="btn btn-primary my-2"/>
-              </form>
-              <a class="btn btn-secondary my-2" th:href="@{/admin}">home</a>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
-    <div class="col d-none d-md-block d-flex justify-content-center align-items-center mt-5">
-      <img src="https://img.freepik.com/free-vector/hand-drawn-flat-design-stack-books-illustration_23-2149341898.jpg"
-           alt="Circular Image" class="rounded-circle w-75 h-75">
-    </div>
+  <div th:insert="~{fragments/intro :: headerFragment('Courses Manage', 'On this page, you have the following options: Add, delete and edit Courses. Feel free to navigate through the available options and manage the course database according to your needs.',
+  '/admin', 'https://img.freepik.com/free-vector/hand-drawn-flat-design-stack-books-illustration_23-2149341898.jpg')}">
   </div>
-
-  <div th:if="${addedCourse}">
-    <div class="alert alert-success text-center" role="alert">
-      Course added successfully!
-    </div>
+  <div th:if="${courseChange}">
+    <div class="alert alert-success text-center" role="alert" th:text="${courseChange}"></div>
   </div>
-
-  <div th:if="${editedCourse}">
-    <div class="alert alert-success text-center" role="alert">
-      Course was edited successfully!
-    </div>
+  <div th:if="${error}">
+    <div class="alert alert-danger text-center" role="alert" th:text="${error}"></div>
   </div>
-
-
   <div class="container mb-5 text-center">
     <div class="table-responsive" >
       <table class="table table-hover">
-        <thead>
-        <tr>
-          <th scope="col">Course Code</th>
-          <th scope="col">Course Name</th>
-          <th scope="col">Professor</th>
-          <th scope="col">Year</th>
-          <th scope="col">Semester</th>
-          <th scope="col">Capacity</th>
-          <th scope="col">Overview</th>
-          <th scope="col"></th>
-          <th scope="col"></th>
-        </tr>
-        </thead>
+        <thead th:replace="~{fragments/courseFormThead :: tableHeader}"></thead>
         <tbody>
         <tr th:each="course: ${courses}">
-          <td class="text-justify " th:text="${course.courseCode}"></td>
+          <td class="text-justify" th:text="${course.courseCode}"></td>
           <td class="text-justify" th:text="${course.courseName}"></td>
           <td class="text-justify" th:text="${course.professor}"></td>
           <td class="text-justify" th:text="${course.year}"></td>
@@ -76,7 +31,9 @@
               <button type="submit" class="btn btn-outline-danger my-2">delete</button>
             </form>
           </td>
-          <td><a class="btn btn-outline-warning my-2" th:href="@{'/admin/coursesManage/editCourse/' + ${course.id}}">edit </a></td>
+          <td>
+            <a class="btn btn-outline-warning my-2" th:href="@{'/admin/coursesManage/editCourse/' + ${course.id}}">edit </a>
+          </td>
         </tr>
         </tbody>
       </table>

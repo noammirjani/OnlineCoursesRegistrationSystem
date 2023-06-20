@@ -1,90 +1,22 @@
 <!DOCTYPE html>
-<html lang="en" class="h-100" data-bs-theme="auto"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-      xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta charset="UTF-8">
-  <title>OCM</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
-  <link rel="stylesheet" th:href="@{/css/login.css}" />
-</head>
-<body>
-
-<header class="py-4 border-bottom">
-  <div class="position-absolute start-50 top-0 justify-content-center">
-    <div class="row flex-shrink-0 dropdown col-lg-8 mt-2">
-      <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-        <img src="https://cdn-icons-png.flaticon.com/512/201/201818.png"
-             alt="mdo" width="32" height="32" class="rounded-circle border">
-      </a>
-      <ul class="dropdown-menu text-small shadow text-center">
-        <li> Hello! </li>
-        <li>username: <span th:text="${#strings.substringBefore(#authentication.principal.username, '@')}"></span></li>
-        <li>email: <span sec:authentication="name"></span></li>
-        <li>roll: student</li>
-        <li>
-          <form th:action="@{/logout}" method="post" style="display:inline">
-            <input type="submit" value="Logout" class="btn btn-sm btn-primary my-2"/>
-          </form>
-        </li>
-      </ul>
-    </div>
-  </div>
-</header>
-
-
+<html lang="en" class="h-100" data-bs-theme="auto" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('OCM-EDU - My Courses', @{/css/register.css})}"></head>
+<body class="d-flex flex-column h-100">
+<header th:replace="~{fragments/adminNavbar :: navbar('student', 'https://cdn-icons-png.flaticon.com/512/201/201818.png')}"></header>
+<div th:insert="~{fragments/intro :: headerFragment('My Courses', 'On this page you can see your schedule. You can also remove courses from your schedule.',
+  '/user', 'https://img.freepik.com/premium-vector/online-education-service-concept-with-tiny-character_269730-443.jpg')}">
+</div>
 <main>
-  <div class="row">
-    <div class="col col-md-8 intro">
-      <section class="py-5 text-center container">
-        <div class="row py-lg-5">
-          <div class="col-lg-8 col-md-8 mx-auto">
-            <h1 class="fw-light"> My Courses </h1>
-            <p class="lead text-body-secondary">
-              Welcome Back <span th:text="${#strings.substringBefore(#authentication.principal.username, '@')}"></span>! <br/>
-              On this page, you can see your schedule. <br/>
-              You can also remove courses from your schedule.
-            </p>
-            <div>
-              <form th:action="@{/logout}" method="post" style="display:inline">
-                <input type="submit" value="Logout" class="btn btn-primary my-2"/>
-              </form>
-              <a class="btn btn-secondary my-2" th:href="@{/user}">home</a>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
-    <div class="col d-none d-md-block d-flex justify-content-center align-items-center mt-3">
-      <img src="https://img.freepik.com/premium-vector/online-education-service-concept-with-tiny-character_269730-443.jpg"
-           alt="Circular Image" class="w-75 h-75 border border-warning rounded-circle">
-    </div>
-  </div>
-
   <div th:if="${scheduleChange}">
     <div class="alert alert-success text-center" role="alert" th:text="${scheduleChange}"></div>
   </div>
-  <div th:if="${scheduleChangeFailed}">
-    <div class="alert alert-success text-center" role="alert" th:text="${scheduleChangeFailed}"></div>
+  <div th:if="${error}">
+    <div class="alert alert-danger text-center" role="alert" th:text="${error}"></div>
   </div>
-
-
   <div class="container mb-5 text-center">
     <div class="table-responsive" >
       <table class="table table-hover">
-        <thead>
-        <tr>
-          <th scope="col">Course Code</th>
-          <th scope="col">Course Name</th>
-          <th scope="col">Professor</th>
-          <th scope="col">Year</th>
-          <th scope="col">Semester</th>
-          <th scope="col">Capacity</th>
-          <th scope="col">Overview</th>
-          <th scope="col"></th>
-        </tr>
-        </thead>
+        <thead th:replace="~{fragments/courseFormThead :: tableHeader}"></thead>
         <tbody>
         <tr th:each="course: ${courses}">
           <td class="text-justify " th:text="${course.courseCode}"></td>
@@ -94,22 +26,17 @@
           <td class="text-justify" th:text="${course.semester}"></td>
           <td class="text-justify" th:text="${course.capacity}"></td>
           <td class="text-start" th:text="${course.overview}"></td>
-
           <td>
             <form th:action="@{'/user/myCourses/removeCourse/' + ${course.id}}" method="post">
               <button type="submit" class="btn btn-outline-danger my-2"> - remove</button>
             </form>
           </td>
-
         </tr>
         </tbody>
       </table>
     </div>
   </div>
 </main>
-
-
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
         crossorigin="anonymous">

@@ -73,9 +73,9 @@ public class MainController {
             return "admin/addCourse";
         }
 
-        model.addAttribute("addedCourse", true);
+        model.addAttribute("courseChange", "Course added successfully!");
         model.addAttribute("courses", repository.findAll());
-        return "redirect:/admin/coursesManage";
+        return "admin/coursesManage";
     }
 
 
@@ -85,7 +85,12 @@ public class MainController {
         Course course = repository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid course Id:" + id));
 
-        repository.delete(course);
+        try{
+            repository.delete(course);
+            model.addAttribute("courseChange", "Course deleted successfully!");
+        } catch (Exception e) {
+            model.addAttribute("error", "Course cannot be deleted");
+        }
 
         model.addAttribute("courses", repository.findAll());
         return "redirect:/admin/coursesManage";
@@ -128,6 +133,7 @@ public class MainController {
             return "admin/editCourse";
         }
 
+        model.addAttribute("courseChange", "Course edited successfully!");
         model.addAttribute("editedCourse", true);
         model.addAttribute("courses", repository.findAll());
         return "redirect:/admin/coursesManage";
@@ -157,10 +163,10 @@ public class MainController {
 
         try {
             registrationRepository.delete(registration);
-            model.addAttribute("registrationDeleted", true);
+            model.addAttribute("registrationChange", "Registration deleted successfully!");
         } catch (Exception e) {
             model.addAttribute("error", "Registration cannot be deleted");
-            return "admin/editCourse";
+            return "redirect:admin/coursesRegistrationManage";
         }
 
         model.addAttribute("courses", getUniqueCourseNames(registrationRepository.findAll()));
@@ -174,7 +180,7 @@ public class MainController {
 
         try{
             registrationRepository.deleteAll();
-            model.addAttribute("registrationDeleted", true);
+            model.addAttribute("registrationChange", "All registrations deleted successfully!");
 
         } catch (Exception e) {
             model.addAttribute("error", "cannot delete all registrations");
@@ -253,17 +259,16 @@ public class MainController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userName = authentication.getName();
 
-        if (registrationRepository.countByCourseName(course.getCourseName()) < course.getCapacity()){
+
+        try{
             CourseRegistration cr = new CourseRegistration(course.getCourseName(), userName);
             registrationRepository.save(cr);
             model.addAttribute("scheduleChange", course.getCourseName() + " added to your schedule.");
         }
-        else {
-            model.addAttribute("scheduleChangeFailed", course.getCourseName() + " is full!");
+        catch (Exception e) {
+            model.addAttribute("error", "Course is full!");
+            return "admin/editCourse";
         }
-
-        CourseRegistration cr = new CourseRegistration(course.getCourseName(), userName);
-        registrationRepository.save(cr);
 
         List<String> ownedCourseNames = new ArrayList<>();
         for (CourseRegistration crr : registrationRepository.findByStudent(userName)) {
@@ -329,7 +334,7 @@ public class MainController {
             registrationRepository.delete(cr);
             model.addAttribute("scheduleChange", course.getCourseName()+ " removed from your schedule.");
         } catch (Exception e) {
-            model.addAttribute("scheduleChangeFailed", "cannot delete registration");
+            model.addAttribute("error ", "cannot delete registration");
         }
 
         model.addAttribute("courses", registrationRepository.findCoursesByStudent(userName));

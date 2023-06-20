@@ -1,0 +1,22 @@
+<div th:fragment="headerFragment (headerText, contentText, homeUrl, imageUrl)" class="row" >
+  <section class="py-5 text-center col col-md-8 intro">
+    <div class="row py-lg-5">
+      <div class="col-lg-8 col-md-8 mx-auto">
+        <h1 class="fw-light" th:text="${headerText}">Header</h1>
+        <p class="lead text-body-secondary">
+          Welcome Back <span th:text="${#strings.substringBefore(#authentication.principal.username, '@')}"></span>! <br/>
+          <span th:text="${contentText}">Content</span>
+        </p>
+        <div>
+          <form th:action="@{/logout}" method="post" style="display:inline">
+            <input type="submit" value="Logout" class="btn btn-primary my-2"/>
+          </form>
+          <a class="btn btn-secondary my-2" th:href="${homeUrl}">home</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="col d-none d-md-block d-flex justify-content-center align-items-center mt-5">
+    <img th:src="${imageUrl}" alt="Circular Image" class="rounded-circle w-75 h-75">
+  </div>
+</div>
