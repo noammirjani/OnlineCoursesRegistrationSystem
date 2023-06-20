@@ -43,18 +43,21 @@ public class UserController {
 
         Course course = findCourse(id);
 
-        CourseRegistration cr = new CourseRegistration(course.getCourseName(), getAuthenticatedUserName());
-        if(getOwnedCourseNames().contains(course.getCourseName())) {
+        try{
+            if(registrationRepository.countByCourseName(course.getCourseName()) >= course.getCapacity()) {
+                redirectAttributes.addFlashAttribute("error", "Course is full!");
+            }else{
+                CourseRegistration cr = new CourseRegistration(course.getCourseName(), getAuthenticatedUserName());
+                registrationRepository.save(cr);
+                redirectAttributes.addFlashAttribute("scheduleChange", course.getCourseName() + " added to your schedule.");
+            }
+        }catch(Exception e){
             redirectAttributes.addFlashAttribute("error", "You are already registered for this course!");
-        }else if(registrationRepository.countByCourseName(course.getCourseName()) >= course.getCapacity()) {
-            redirectAttributes.addFlashAttribute("error", "Course is full!");
-        }else{
-            registrationRepository.save(cr);
-            redirectAttributes.addFlashAttribute("scheduleChange", course.getCourseName() + " added to your schedule.");
         }
 
         return "redirect:/user/coursesRegistration";
     }
+
 
     @PostMapping("/user/coursesRegistration/removeCourse/{id}")
     public String userDeleteCourse(@PathVariable("id") long id, RedirectAttributes redirectAttributes) {
