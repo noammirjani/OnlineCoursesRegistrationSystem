@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="auto" xmlns:th="http://www.thymeleaf.org">
-<head th:insert="fragments/head :: head('OCM-EDU About Us', @{/css/course.css})"></head>
+<head th:replace="~{fragments/head :: head('OCM-EDU About Us', @{/css/course.css})}"></head>
 <body>
 <header class="mb-auto text-center">
     <div th:insert="~{fragments/menuBar.html :: menuBar(${activeMenu})}"></div>

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" class="h-100" data-bs-theme="auto" xmlns:th="http://www.thymeleaf.org">
-<head th:insert="fragments/head :: head('OCM-EDU Courses View', @{/css/course.css})"></head>
+<head th:replace="~{fragments/head :: head('OCM-EDU Courses View', @{/css/course.css})}"></head>
 <body>
 <header class="mb-auto text-center">
     <div th:insert="~{fragments/menuBar.html :: menuBar(${activeMenu})}"></div>
@@ -21,7 +21,7 @@
             <h2 th:case="0">No courses yet!</h2>
             <div th:case="*" class="row row-cols-xs-2 row-cols-md-3 row-cols-lg-4">
                 <div th:each="course : ${coursesData}" class="col mb-3">
-                    <div th:insert="fragments/courseCard.html :: courseCard(${course})"></div>
+                    <div th:insert="~{fragments/courseCard.html :: courseCard(${course})}"></div>
                 </div>
             </div>
         </div>

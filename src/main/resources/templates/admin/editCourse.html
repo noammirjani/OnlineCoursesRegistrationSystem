@@ -43,7 +43,7 @@
                     <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                     <label class="form-label" for="courseCode">Course Code</label>
                     <input type="number" th:field="*{courseCode}" id="courseCode" name="courseCode"
-                           class="form-control" required/>
+                           class="form-control" min="1" required/>
                     <span th:if="${#fields.hasErrors('courseCode')}" th:errors="*{courseCode}" class="text-danger"></span>
                   </div>
                 </div>
@@ -70,7 +70,7 @@
                   <div class="form-outline flex-fill mb-0">
                     <i class="fas fa-users fa-lg me-3 fa-fw"></i>
                     <label class="form-label" for="capacity">Capacity</label>
-                    <input type="number" th:field="*{capacity}" id="capacity"
+                    <input type="number" th:field="*{capacity}" id="capacity" min="0"
                            name="capacity" class="form-control" required />
                     <span th:if="${#fields.hasErrors('capacity')}" th:errors="*{capacity}" class="text-danger"></span>
                   </div>
@@ -92,7 +92,7 @@
               </form>
             </div>
             <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
-              <img src="https://img.freepik.com/free-vector/man-analyzing-checklist-illustration_23-2148078311.jpg?t=st=1686768579~exp=1686769179~hmac=fd56b8cc660e4a94335fbd693440f9788ade8c044e3d6501a8c5a5263d683d50"
+              <img src="https://img.freepik.com/premium-vector/illustration-vector-graphic-cartoon-character-business-education_516790-522.jpg?w=2000"
                    class="img-fluid " alt="Sample">
             </div>
           </div>

@@ -4,7 +4,7 @@
 <body class="d-flex flex-column h-100">
 <header th:replace="~{fragments/adminNavbar :: navbar('student', 'https://cdn-icons-png.flaticon.com/512/201/201818.png')}"></header>
 <div th:insert="~{fragments/intro :: headerFragment('My Courses', 'On this page you can see your schedule. You can also remove courses from your schedule.',
-  '/user', 'https://img.freepik.com/premium-vector/online-education-service-concept-with-tiny-character_269730-443.jpg')}">
+  '/user', 'https://img.freepik.com/free-vector/online-certification-with-graduate-laptop_23-2148571246.jpg')}">
 </div>
 <main>
   <div th:if="${scheduleChange}">
@@ -14,7 +14,13 @@
     <div class="alert alert-danger text-center" role="alert" th:text="${error}"></div>
   </div>
   <div class="container mb-5 text-center">
-    <div class="table-responsive" >
+    <div th:if="${#lists.size(courses) == 0}">
+    <div class="alert alert-info text-center" role="alert">
+      Hey there! You have not registered for any courses yet. <br>
+        <a class="my-2" th:href="@{/user/coursesRegistration}"> go register! </a>
+    </div>
+  </div>
+    <div class="table-responsive" th:unless="${#lists.size(courses) == 0}">
       <table class="table table-hover">
         <thead th:replace="~{fragments/courseFormThead :: tableHeader}"></thead>
         <tbody>

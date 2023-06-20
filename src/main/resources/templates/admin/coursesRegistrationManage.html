@@ -9,7 +9,7 @@
 
     <div th:insert="~{fragments/intro :: headerFragment('Courses Registrations Manager',
     'On this page, you have the following options: Delete students registrations for various courses. Feel free to navigate through the available options and manage the course database according to your needs.',
-    '/admin', 'https://img.freepik.com/free-vector/hand-drawn-flat-design-stack-books-illustration_23-2149341898.jpg')}">
+    '/admin', 'https://img.freepik.com/premium-vector/illustration-vector-graphic-cartoon-character-businessman_516790-114.jpg?w=360')}">
     </div>
     <div th:if="${registrationChange}">
         <div class="alert alert-success text-center" role="alert" th:text="${registrationChange}">
@@ -18,8 +18,20 @@
     </div>
     <div class="row mb-5 text-center">
         <form class="row gx-3 gy-2 align-items-center" th:action="@{'/admin/coursesRegistrationManage/search'}" method="post">
-            <div th:replace="~{fragments/selectInput :: selectInput(${courses},'courseName','Course Name')}"></div>
-            <div th:replace="~{fragments/selectInput :: selectInput(${students},'studentName','Student')}"></div>
+            <div class="col-sm-3">
+                <label class="visually-hidden" for="courseName">Course NAme</label>
+                <select class="form-control" id="courseName" name="courseName">
+                    <option selected value="">Choose...</option>
+                    <option th:each="course: ${courses}" th:value="${course}" th:text="${course}"></option>
+                </select>
+            </div>
+            <div class="col-sm-3">
+                <label class="visually-hidden" for="studentName">Student</label>
+                <select class="form-control" id="studentName"  name="studentName">
+                    <option selected value="">Choose...</option>
+                    <option th:each="student: ${students}" th:value="${student}" th:text="${student}"></option>
+                </select>
+            </div>
             <div class="col-auto">
                 <button type="submit" class="btn btn-primary">search</button>
             </div>
