@@ -18,13 +18,10 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-
 @Controller
 public class MainController {
-
     @Autowired
     private CourseRepository repository;
-
     @Autowired
     private CourseRegistrationRepository registrationRepository;
 
@@ -247,28 +244,36 @@ public class MainController {
     @PostMapping("/user/coursesRegistration/addCourse/{id}")
     public String userCoursesRegistrationPost(@PathVariable("id") long id, Model model) {
 
-        Course course = repository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid course Id:" + id));
-
+        List<String> ownedCourseNames = new ArrayList<>();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userName = authentication.getName();
 
-        if (registrationRepository.countByCourseName(course.getCourseName()) < course.getCapacity()){
-            CourseRegistration cr = new CourseRegistration(course.getCourseName(), userName);
-            registrationRepository.save(cr);
-            model.addAttribute("scheduleChange", course.getCourseName() + " added to your schedule.");
+        try {
+            Course course = repository.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid course Id:" + id));
+
+
+
+            if (registrationRepository.countByCourseName(course.getCourseName()) < course.getCapacity()) {
+                CourseRegistration cr = new CourseRegistration(course.getCourseName(), userName);
+                registrationRepository.save(cr);
+                model.addAttribute("scheduleChange", course.getCourseName() + " added to your schedule.");
+            } else {
+                model.addAttribute("scheduleChangeFailed", course.getCourseName() + " is full!");
+            }
+
         }
-        else {
-            model.addAttribute("scheduleChangeFailed", course.getCourseName() + " is full!");
+        catch (Exception e){
+
+            model.addAttribute("error","You are you already register to that coure!" );
+            return "/user/coursesRegistration";
+        }
+        finally {
+            for (CourseRegistration crr : registrationRepository.findByStudent(userName)) {
+                ownedCourseNames.add(crr.getCourseName());
+            }
         }
 
-        CourseRegistration cr = new CourseRegistration(course.getCourseName(), userName);
-        registrationRepository.save(cr);
-
-        List<String> ownedCourseNames = new ArrayList<>();
-        for (CourseRegistration crr : registrationRepository.findByStudent(userName)) {
-            ownedCourseNames.add(crr.getCourseName());
-        }
 
         model.addAttribute("ownedCourses", ownedCourseNames);
         model.addAttribute("courses", repository.findAll());

@@ -13,7 +13,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 //    List<Course> findByUserName(String userName);
 //    List<Course> findUserByUserName(String userName);
 //    List<Course> findByEmail(String email);
-//    List<Course> findByUserNameAndEmail(String userName, String email);
+//    List<Course> findByUserNameAndEmailNF(String userName, String email);
 //    List<Course> findFirst10ByOrderByUserNameDesc(); // find first 10 users ordered by userName desc
 
 }

@@ -69,6 +69,10 @@
   <div th:if="${scheduleChangeFailed}">
     <div class="alert alert-warning text-center" role="alert" th:text="${scheduleChangeFailed}"></div>
   </div>
+  <div th:if="${error}">
+    <div class="alert alert-danger text-center" role="alert" th:text="${error}"></div>
+  </div>
+<!--  <div class="alert alert-danger text-center" role="alert" th:text="${error}"></div>-->
 
   <div class="container mb-5 text-center">
     <div class="table-responsive" >
@@ -95,14 +99,15 @@
           <td class="text-justify" th:text="${course.capacity}"></td>
           <td class="text-start" th:text="${course.overview}"></td>
 
-          <td th:if="${ownedCourses.contains(course.courseName)}">
-            <form th:action="@{'/user/coursesRegistration/removeCourse/' + ${course.id}}" method="post">
-              <button type="submit" class="btn btn-outline-danger my-2"> - remove</button>
-            </form>
-          </td>
-          <td th:unless="${ownedCourses.contains(course.courseName)}">
+<!--          <td th:if="${ownedCourses.contains(course.courseName)}">-->
+<!--            <form th:action="@{'/user/coursesRegistration/removeCourse/' + ${course.id}}" method="post">-->
+<!--              <button type="submit" class="btn btn-outline-danger my-2"> - remove</button>-->
+<!--            </form>-->
+<!--          </td>-->
+<!--          <td th:unless="${ownedCourses.contains(course.courseName)}">-->
+          <td >
             <form th:action="@{'/user/coursesRegistration/addCourse/' + ${course.id}}" method="post">
-              <button type="submit" class="btn btn-outline-info my-2"> + add</button>
+              <button type="submit" class="btn btn-outline-info my-2  "> + add</button>
             </form>
           </td>
 

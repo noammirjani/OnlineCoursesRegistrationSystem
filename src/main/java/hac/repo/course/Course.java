@@ -19,11 +19,13 @@ public class Course implements Serializable {
 
     @NotNull(message = "Course Code is required")
     @Min(value = 0, message = "Course Code cannot be negative")
+    @Column(unique = true)
     private Integer courseCode;
 
     @NotEmpty(message = "Course Name is required")
     //@Pattern(regexp="^[a-zA-Z0-9 ]+$", message="Course Name cannot contain special characters")
     @Size(max = 50, message = "Course Name must be no more than 50 characters")
+    @Column(unique = true)
     private String courseName;
 
     @NotNull(message = "Num of semesters is required")
