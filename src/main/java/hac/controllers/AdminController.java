@@ -4,6 +4,7 @@ import hac.repo.course.Course;
 import hac.repo.course.CourseRepository;
 import hac.repo.coursesRegistrations.CourseRegistration;
 import hac.repo.coursesRegistrations.CourseRegistrationRepository;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -44,8 +46,8 @@ public class AdminController {
     }
 
     @PostMapping("/admin/coursesManage/addCourse")
-    public String adminAddCoursePost(@Valid Course course, BindingResult result, Model model) {
-        return saveCourse(course, result, model, "admin/addCourse", "Course added successfully!");
+    public String adminAddCoursePost(@Valid Course course, BindingResult result, RedirectAttributes redirectAttributes) {
+        return saveCourse(course, result, redirectAttributes, "admin/addCourse", "Course added successfully!");
     }
 
     @GetMapping("/admin/coursesManage/editCourse/{id}")
@@ -56,95 +58,70 @@ public class AdminController {
     }
 
     @PostMapping("/admin/coursesManage/editCourse/{id}")
-    public String adminEditCoursePost(@PathVariable("id") long id, @Valid Course course, BindingResult result, Model model) {
+    public String adminEditCoursePost(@PathVariable("id") long id, @Valid Course course, BindingResult result, RedirectAttributes redirectAttributes) {
         course.setId(id);
-        return saveCourse(course, result, model, "admin/editCourse", "Course edited successfully!");
+        return saveCourse(course, result, redirectAttributes, "admin/editCourse", "Course edited successfully!");
     }
 
+
+    @Transactional
     @PostMapping("/admin/coursesManage/deleteCourse/{id}")
-    public String adminDeleteCourse(@PathVariable("id") long id, Model model) {
+    public String adminDeleteCourse(@PathVariable("id") long id, RedirectAttributes redirectAttributes) {
         Course course = findCourse(id);
-        try {
-            repository.delete(course);
-            model.addAttribute("courseChange", "Course deleted successfully!");
-        } catch (Exception e) {
-            model.addAttribute("error", "Course cannot be deleted");
-            return "redirect:/admin/coursesManage";
-        }
-        model.addAttribute("courses", repository.findAll());
+        registrationRepository.deleteAllByCourseName(course.getCourseName());
+        repository.delete(course);
+        redirectAttributes.addFlashAttribute("courseChange", "Course deleted successfully!");
         return "redirect:/admin/coursesManage";
     }
 
-
-    private String saveCourse(Course course, BindingResult result, Model model, String errorPage, String successMessage) {
+    private String saveCourse(Course course, BindingResult result, RedirectAttributes redirectAttributes, String errorPage, String successMessage) {
         if (result.hasErrors()){
             return errorPage;
         }
-
-        try{
-            repository.save(course);
-        } catch (Exception e) {
-            // error needs to show on the same page
-            model.addAttribute("error", "Course already exists");
-            return errorPage;
-        }
-
-        model.addAttribute("courseChange", successMessage);
-        model.addAttribute("courses", repository.findAll());
-        return "admin/coursesManage";
+        repository.save(course);
+        redirectAttributes.addFlashAttribute("courseChange", successMessage);
+        return "redirect:/admin/coursesManage";
     }
 
     private Course findCourse(long id) {
         return repository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid course Id:" + id));
     }
 
-    private CourseRegistration findCR(long id) {
-        return registrationRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid course registration Id:" + id));
+    private CourseRegistration findRegister(long id) {
+        return registrationRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid registration Id:" + id));
     }
 
-
     //-------- admin manage Registrations (students) --------------------
-
     @GetMapping("/admin/coursesRegistrationManage")
     public String adminCoursesRegistration (Model model) {
-        return getCourseRegisterModel(model, registrationRepository.findAll(), false);
+        model.addAttribute("courses", getCoursesNames());
+        model.addAttribute("students", getStudentsNames());
+        model.addAttribute("filteredData", registrationRepository.findAll());
+
+        return "admin/coursesRegistrationManage";
     }
 
     @PostMapping("/admin/coursesRegistrationManage/deleteRegistration/{id}")
-    public String adminDeleteRegistration(@PathVariable("id") long id, Model model) {
+    public String adminDeleteRegistration(@PathVariable("id") long id, RedirectAttributes redirectAttributes) {
 
-        CourseRegistration registration = registrationRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid course Id:" + id));
-
-        try {
-            registrationRepository.delete(registration);
-            model.addAttribute("registrationChange", "Registration deleted successfully!");
-        } catch (Exception e) {
-            model.addAttribute("error", "Registration cannot be deleted");
-            return "redirect:admin/coursesRegistrationManage";
-        }
-
-        return getCourseRegisterModel(model, registrationRepository.findAll(), true);
+        CourseRegistration registration = findRegister(id);
+        registrationRepository.delete(registration);
+        redirectAttributes.addFlashAttribute("registrationChange", "Registration deleted successfully!");
+        return "redirect:/admin/coursesRegistrationManage";
     }
 
     @PostMapping("/admin/coursesRegistrationManage/removeAllRegistration")
-    public String adminDeleteAllRegistration(Model model) {
+    public String adminDeleteAllRegistration(RedirectAttributes redirectAttributes) {
 
-        try{
-            registrationRepository.deleteAll();
-            model.addAttribute("registrationChange", "All registrations deleted successfully!");
-
-        } catch (Exception e) {
-            model.addAttribute("error", "cannot delete all registrations");
-            return "admin/editCourse";
-        }
-
-        return getCourseRegisterModel(model, registrationRepository.findAll(), true);
+        registrationRepository.deleteAll();
+        redirectAttributes.addFlashAttribute("registrationChange", "All registrations deleted successfully!");
+        return "redirect:/admin/coursesRegistrationManage";
     }
 
     @PostMapping("/admin/coursesRegistrationManage/search")
     public String adminSearchRegistration(@RequestParam("courseName") String courseName,
                                           @RequestParam("studentName") String student,
-                                          Model model) {
+                                          RedirectAttributes redirectAttributes) {
         List<CourseRegistration> registration;
 
         if (!courseName.equals("") && !student.equals("") ){
@@ -157,21 +134,10 @@ public class AdminController {
             registration = registrationRepository.findAll();
         }
 
-        return getCourseRegisterModel(model, registration, true);
+        redirectAttributes.addFlashAttribute("filteredData", registration);
+        return "redirect:/admin/coursesRegistrationManage";
     }
 
-    private String getCourseRegisterModel(Model model, List<CourseRegistration> filteredData, boolean isPost) {
-
-        model.addAttribute("courses", getCoursesNames());
-        model.addAttribute("students", getStudentsNames());
-        model.addAttribute("filteredData", filteredData);
-
-        if(isPost) {
-            return "redirect:/admin/coursesRegistrationManage";
-        }
-
-        return "admin/coursesRegistrationManage";
-    }
 
     private List<String> getCoursesNames() {
         Iterable<Course> courses = repository.findAll();

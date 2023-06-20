@@ -7,12 +7,6 @@
   '/user', 'https://img.freepik.com/free-vector/online-certification-with-graduate-laptop_23-2148571246.jpg')}">
 </div>
 <main>
-  <div th:if="${scheduleChange}">
-    <div class="alert alert-success text-center" role="alert" th:text="${scheduleChange}"></div>
-  </div>
-  <div th:if="${error}">
-    <div class="alert alert-danger text-center" role="alert" th:text="${error}"></div>
-  </div>
   <div class="container mb-5 text-center">
     <div th:if="${#lists.size(courses) == 0}">
     <div class="alert alert-info text-center" role="alert">

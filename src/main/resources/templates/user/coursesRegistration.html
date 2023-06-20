@@ -14,7 +14,12 @@
     <div class="alert alert-warning text-center" role="alert" th:text="${error}"></div>
   </div>
   <div class="container mb-5 text-center">
-    <div class="table-responsive" >
+    <div th:if="${#lists.size(courses) == 0}">
+      <div class="alert alert-primary text-center" role="alert">
+        no courses available for registration :(
+        </div>
+    </div>
+    <div th:unless="${#lists.size(courses) == 0}" class="table-responsive" >
       <table class="table table-hover">
         <thead th:replace="~{fragments/courseFormThead :: tableHeader}"></thead>
         <tbody>
