@@ -54,7 +54,7 @@
                 </thead>
                 <tbody>
                 <tr th:each="registeration: ${filteredData}">
-                    <td class="text-justify" th:text="${registeration.courseName}"></td>
+                    <td class="text-justify" th:text="${registeration.getCourse().getCourseName()}"></td>
                     <td class="text-justify" th:text="${registeration.student}"></td>
                     <td>
                         <form th:action="@{'/admin/coursesRegistrationManage/deleteRegistration/' + ${registeration.id}}" method="post">

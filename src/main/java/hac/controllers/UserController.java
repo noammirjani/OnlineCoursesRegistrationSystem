@@ -44,10 +44,10 @@ public class UserController {
         Course course = findCourse(id);
 
         try{
-            if(registrationRepository.countByCourseName(course.getCourseName()) >= course.getCapacity()) {
+            if(registrationRepository.countByCourse(course) >= course.getCapacity()) {
                 redirectAttributes.addFlashAttribute("error", "Course is full!");
             }else{
-                CourseRegistration cr = new CourseRegistration(course.getCourseName(), getAuthenticatedUserName());
+                CourseRegistration cr = new CourseRegistration(course, getAuthenticatedUserName());
                 registrationRepository.save(cr);
                 redirectAttributes.addFlashAttribute("scheduleChange", course.getCourseName() + " added to your schedule.");
             }
@@ -62,7 +62,7 @@ public class UserController {
     @PostMapping("/user/coursesRegistration/removeCourse/{id}")
     public String userDeleteCourse(@PathVariable("id") long id, RedirectAttributes redirectAttributes) {
         Course course = findCourse(id);
-        CourseRegistration cr = registrationRepository.findByCourseNameAndStudent(course.getCourseName(), getAuthenticatedUserName()).get(0);
+        CourseRegistration cr = registrationRepository.findByCourseAndStudent(course, getAuthenticatedUserName()).get(0);
         registrationRepository.delete(cr);
         redirectAttributes.addFlashAttribute("scheduleChange", course.getCourseName() + " removed from your schedule.");
         return "redirect:/user/coursesRegistration";
@@ -78,7 +78,7 @@ public class UserController {
     public String userRemoveCourse(@PathVariable("id") long id, RedirectAttributes redirectAttributes) {
 
         Course course = findCourse(id);
-        CourseRegistration cr = registrationRepository.findByCourseNameAndStudent(course.getCourseName(), getAuthenticatedUserName()).get(0);
+        CourseRegistration cr = registrationRepository.findByCourseAndStudent(course, getAuthenticatedUserName()).get(0);
         registrationRepository.delete(cr);
         redirectAttributes.addFlashAttribute("scheduleChange", course.getCourseName() + " removed from your schedule.");
 
@@ -93,7 +93,7 @@ public class UserController {
     private List<String> getOwnedCourseNames() {
         List<String> ownedCourseNames = new ArrayList<>();
         for (CourseRegistration cr : registrationRepository.findByStudent(getAuthenticatedUserName())) {
-            ownedCourseNames.add(cr.getCourseName());
+            ownedCourseNames.add(cr.getCourse().getCourseName());
         }
         return ownedCourseNames;
     }

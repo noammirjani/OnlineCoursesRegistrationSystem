@@ -68,7 +68,7 @@ public class AdminController {
     @PostMapping("/admin/coursesManage/deleteCourse/{id}")
     public String adminDeleteCourse(@PathVariable("id") long id, RedirectAttributes redirectAttributes) {
         Course course = findCourse(id);
-        registrationRepository.deleteAllByCourseName(course.getCourseName());
+        registrationRepository.deleteAllByCourse(course);
         repository.delete(course);
         redirectAttributes.addFlashAttribute("courseChange", "Course deleted successfully!");
         return "redirect:/admin/coursesManage";
@@ -94,6 +94,7 @@ public class AdminController {
     //-------- admin manage Registrations (students) --------------------
     @GetMapping("/admin/coursesRegistrationManage")
     public String adminCoursesRegistration (Model model) {
+
         model.addAttribute("courses", getCoursesNames());
         model.addAttribute("students", getStudentsNames());
         model.addAttribute("filteredData", registrationRepository.findAll());
@@ -140,12 +141,13 @@ public class AdminController {
 
 
     private List<String> getCoursesNames() {
-        Iterable<Course> courses = repository.findAll();
-        List<String> uniqueCourseNames = new ArrayList<>();
-        courses.forEach(course -> uniqueCourseNames.add(course.getCourseName()));
-        Set<String> uniqueCourseNameSet = new HashSet<>(uniqueCourseNames);
-        return new ArrayList<>(uniqueCourseNameSet);
+        Iterable<Course> courseRegistrations = repository.findAll();
+        List<String> courses = new ArrayList<>();
+        courseRegistrations.forEach(c -> courses.add(c.getCourseName()));
+        Set<String> uniqueCourseNameSet = new HashSet<>(courses);
+        return new ArrayList<> (uniqueCourseNameSet);
     }
+
 
     private List<String> getStudentsNames() {
         Iterable<CourseRegistration> courseRegistration = registrationRepository.findAll();

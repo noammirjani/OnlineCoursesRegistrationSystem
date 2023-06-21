@@ -8,18 +8,23 @@ import java.util.List;
 
 public interface CourseRegistrationRepository extends JpaRepository<CourseRegistration, Long>{
 
+      List <CourseRegistration> findByCourseAndStudent(Course course, String student);
+
+      @Query("SELECT cr FROM CourseRegistration cr WHERE cr.course.courseName = :courseName AND cr.student = :student")
       List <CourseRegistration> findByCourseNameAndStudent(String courseName, String student);
+
       List <CourseRegistration> findByStudent(String student);
-      List <CourseRegistration> findByCourseName( String courseName);
 
-      int countByCourseName(String courseName);
+      @Query("SELECT cr FROM CourseRegistration cr WHERE cr.course.courseName = :courseName")
+      List <CourseRegistration> findByCourseName(String courseName);
 
+      int countByCourse(Course course);
 
-//    @Modifying
-//    @Query("DELETE FROM CourseRegistration cr WHERE cr.courseName = :courseName")
-      void deleteAllByCourseName(String courseName);
+      void deleteAllByCourse(Course course);
 
-     @Query("SELECT c FROM Course c JOIN CourseRegistration cr ON c.courseName = cr.courseName WHERE cr.student = :studentName")
+     @Query("SELECT c FROM Course c JOIN CourseRegistration cr ON c = cr.course WHERE cr.student = :studentName")
      List<Course> findCoursesByStudent(String studentName);
+
+
 
 }
