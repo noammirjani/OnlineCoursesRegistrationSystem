@@ -25,6 +25,10 @@ public class AdminService {
         return repository.findAll();
     }
 
+    public List<CourseRegistration> findAllRegistrations(){
+        return registrationRepository.findAll();
+    }
+
     public void saveCourse(Course course){
         repository.save(course);
     }
@@ -76,6 +80,7 @@ public class AdminService {
         } else if (courseName.equals("") && !student.equals("") ) {
             return registrationRepository.findByStudent(student);
         } else if (!courseName.equals("")){ // && student.equals("")
+            System.out.println(registrationRepository.findByCourseName(courseName));
             return registrationRepository.findByCourseName(courseName);
         } else {
             return registrationRepository.findAll();

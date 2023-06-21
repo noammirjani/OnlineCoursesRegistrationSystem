@@ -15,7 +15,7 @@ public class CourseRegistration implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne (cascade = CascadeType.ALL)
+    @ManyToOne
     private Course course;
 
     @NotEmpty(message = "Course Name is required")
