@@ -14,6 +14,12 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @Configuration
 public class AppConfig {
 
+    /**
+     * Creates and configures the user details service.
+     *
+     * @param bCryptPasswordEncoder The password encoder for encoding passwords.
+     * @return The configured user details service.
+     */
     @Bean
     public UserDetailsService userDetailsService(PasswordEncoder bCryptPasswordEncoder) {
         InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
@@ -32,11 +38,23 @@ public class AppConfig {
         return manager;
     }
 
+    /**
+     * Creates and configures the password encoder.
+     *
+     * @return The configured password encoder.
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Configures the security filter chain for HTTP security.
+     *
+     * @param http The HTTP security object to be configured.
+     * @return The configured security filter chain.
+     * @throws Exception If an exception occurs during configuration.
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors(withDefaults())

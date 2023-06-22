@@ -16,6 +16,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
+
+/**
+ * Controller class for handling administrative operations.
+ */
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
@@ -23,23 +27,49 @@ public class AdminController {
     @Autowired
     private AdminService service;
 
+    /**
+     * Handles the request for the admin index page.
+     *
+     * @return The view name for the admin index page.
+     */
     @GetMapping
     public String adminIndex() {
         return "admin/index";
     }
 
+    /**
+     * Handles the request for the admin courses management page.
+     *
+     * @param model The model for the view.
+     * @return The view name for the admin courses management page.
+     */
     @GetMapping("/coursesManage")
     public String adminCourses(Model model) {
         model.addAttribute("courses", service.getAllCourses());
         return "admin/coursesManage";
     }
 
+    /**
+     * Handles the request for the admin add course page.
+     *
+     * @param course The course object for the form.
+     * @param model  The model for the view.
+     * @return The view name for the admin add course page.
+     */
     @GetMapping("/coursesManage/addCourse")
     public String adminAddCourseGet(Course course, Model model) {
         model.addAttribute("course", course);
         return "admin/addCourse";
     }
 
+    /**
+     * Handles the request for the admin add course page.
+     *
+     * @param course              The course object for the form.
+     * @param result              The binding result for the form.
+     * @param redirectAttributes  The redirect attributes for the view.
+     * @return The view name for the admin add course page.
+     */
     @PostMapping("/coursesManage/addCourse")
     public String adminAddCoursePost(@Valid Course course, BindingResult result, RedirectAttributes redirectAttributes) {
         if (result.hasErrors()){
@@ -50,12 +80,29 @@ public class AdminController {
         return "redirect:/admin/coursesManage";
     }
 
+    /**
+     * Handles the request for the admin edit course page.
+     *
+     * @param id    The id of the course to edit.
+     * @param model The model for the view.
+     * @return The view name for the admin edit course page.
+     */
     @GetMapping("/coursesManage/editCourse/{id}")
     public String adminEditCourseGet(@PathVariable("id") long id, Model model) {
         model.addAttribute("course", service.getCourse(id));
         return "admin/editCourse";
     }
 
+    /**
+     * Handles the request for the admin edit course page.
+     *
+     * @param id                  The id of the course to edit.
+     * @param course              The course object for the form.
+     * @param result              The binding result for the form.
+     * @param redirectAttributes  The redirect attributes for the view.
+     * @param model               The model for the view.
+     * @return The view name for the admin edit course page.
+     */
     @PostMapping("/coursesManage/editCourse/{id}")
     public String adminEditCoursePost(@PathVariable("id") long id, @Valid Course course, BindingResult result, RedirectAttributes redirectAttributes, Model model) {
         if (result.hasErrors()){
@@ -73,6 +120,13 @@ public class AdminController {
         return "redirect:/admin/coursesManage";
     }
 
+    /**
+     * Handles the request for the admin delete course page.
+     *
+     * @param id                  The id of the course to delete.
+     * @param redirectAttributes  The redirect attributes for the view.
+     * @return The view name for the admin delete course page.
+     */
     @PostMapping("/coursesManage/deleteCourse/{id}")
     public String adminDeleteCourse(@PathVariable("id") long id, RedirectAttributes redirectAttributes) {
         Course course = service.getCourse(id);
@@ -81,6 +135,12 @@ public class AdminController {
         return "redirect:/admin/coursesManage";
     }
 
+    /**
+     * Handles the request for the admin courses registration management page.
+     *
+     * @param model The model for the view.
+     * @return The view name for the admin courses registration management page.
+     */
     @GetMapping("/coursesRegistrationManage")
     public String adminCoursesRegistration (Model model) {
         model.addAttribute("courses", service.getCoursesNames());
@@ -88,13 +148,27 @@ public class AdminController {
         return "admin/coursesRegistrationManage";
     }
 
+    /**
+     * Handles the request for retrieving all registrations.
+     *
+     * @param redirectAttributes  The redirect attributes object for flash attributes.
+     * @return The redirect view name for managing course registrations.
+     */
     @GetMapping("/coursesRegistrationManage/allRegistrations")
     public String adminCoursesRegistrationAll (RedirectAttributes redirectAttributes) {
         redirectAttributes.addFlashAttribute("filteredData", service.getAllRegistrations());
         return "redirect:/admin/coursesRegistrationManage";
     }
 
-
+    /**
+     * Handles the POST request for deleting a registration.
+     *
+     * @param id                   The ID of the registration to be deleted.
+     * @param courseName           The name of the course associated with the registration.
+     * @param student              The name of the student associated with the registration.
+     * @param redirectAttributes   The redirect attributes object for flash attributes.
+     * @return The redirect view name for managing course registrations with search parameters.
+     */
     @PostMapping("/coursesRegistrationManage/deleteRegistration/{id}")
     public String adminDeleteRegistration(@PathVariable("id") long id,
                                           @RequestParam("courseName") String courseName,
@@ -107,6 +181,14 @@ public class AdminController {
         return "redirect:/admin/coursesRegistrationManage/research?courseName=" + courseName + "&studentName=" + student;
     }
 
+    /**
+     * Handles the GET request for searching registrations.
+     *
+     * @param courseName    The name of the course to search for registrations.
+     * @param student       The name of the student to search for registrations.
+     * @param model         The model object.
+     * @return The view name for managing course registrations with search results.
+     */
     @GetMapping("/coursesRegistrationManage/research")
     public String adminResearchRegistration(@RequestParam("courseName") String courseName,
                                             @RequestParam("studentName") String student,
@@ -125,7 +207,12 @@ public class AdminController {
         return "admin/coursesRegistrationManage";
     }
 
-
+    /**
+     * Handles the POST request for deleting all registrations.
+     *
+     * @param redirectAttributes  The redirect attributes object for flash attributes.
+     * @return The redirect view name for managing course registrations with all registrations.
+     */
     @PostMapping("/coursesRegistrationManage/removeAllRegistrations")
     public String adminDeleteAllRegistration(RedirectAttributes redirectAttributes) {
         service.deleteAllRegistrations();
@@ -133,6 +220,14 @@ public class AdminController {
         return "redirect:/admin/coursesRegistrationManage/allRegistrations";
     }
 
+    /**
+     * Handles the POST request for deleting registrations based on search parameters.
+     *
+     * @param courseName           The name of the course to search for registrations.
+     * @param student              The name of the student to search for registrations.
+     * @param redirectAttributes   The redirect attributes object for flash attributes.
+     * @return The redirect view name for managing course registrations with search parameters.
+     */
     @PostMapping("/coursesRegistrationManage/removeSearchRegistrations")
     public String adminDeleteSearchRegistrations(@RequestParam("courseName") String courseName,
                                                  @RequestParam("studentName") String student,
@@ -142,6 +237,14 @@ public class AdminController {
         return "redirect:/admin/coursesRegistrationManage/research?courseName=" + courseName + "&studentName=" + student;
     }
 
+    /**
+     * Handles the POST request for searching registrations.
+     *
+     * @param courseName           The name of the course to search for registrations.
+     * @param student              The name of the student to search for registrations.
+     * @param redirectAttributes   The redirect attributes object for flash attributes.
+     * @return The redirect view name for managing course registrations with search results.
+     */
     @PostMapping("/coursesRegistrationManage/search")
     public String adminSearchRegistration(@RequestParam("courseName") String courseName,
                                           @RequestParam("studentName") String student,
@@ -151,7 +254,13 @@ public class AdminController {
         return "redirect:/admin/coursesRegistrationManage/research?courseName=" + courseName + "&studentName=" + student;
     }
 
-
+    /**
+     * Exception handler for handling any unexpected exceptions.
+     *
+     * @param ex     The exception object.
+     * @param model  The model object.
+     * @return The view name for the error page.
+     */
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public String handleException(Exception ex, Model model) {

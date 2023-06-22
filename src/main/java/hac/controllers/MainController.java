@@ -19,12 +19,23 @@ public class MainController {
     @Autowired
     private CourseRepository repository;
 
+    /**
+     * Handles the request for the home page.
+     *
+     * @param model The model object.
+     * @return The view name for the home page.
+     */
     @GetMapping("/")
     public String home(Model model) {
         model.addAttribute("activeMenu", "home");
         return "index";
     }
 
+    /**
+     * Handles the request for the login page.
+     *
+     * @return The view name for the login page or redirect to the appropriate role-based page.
+     */
     @GetMapping("/login")
     public String login() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -40,7 +51,12 @@ public class MainController {
         return "login";
     }
 
-
+    /**
+     * Handles the request for the courses page.
+     *
+     * @param model The model object.
+     * @return The view name for the courses page.
+     */
     @GetMapping("/courses")
     public String main(Model model) {
         model.addAttribute("coursesData", repository.findAll());
@@ -48,24 +64,48 @@ public class MainController {
         return "courses";
     }
 
+    /**
+     * Handles the request for the about-us page.
+     *
+     * @param model The model object.
+     * @return The view name for the about-us page.
+     */
     @GetMapping("/about-us")
     public String register(Model model) {
         model.addAttribute("activeMenu", "aboutUs");
         return "about-us";
     }
 
+    /**
+     * Handles the request for the forbidden page.
+     *
+     * @return The view name for the forbidden page.
+     */
     @GetMapping("/403")
     public String forbidden() {
         return "403";
     }
 
+    /**
+     * Exception handler for handling any unexpected exceptions.
+     *
+     * @param ex     The exception object.
+     * @param model  The model object.
+     * @return The view name for the error page.
+     */
     @GetMapping("/error-page")
     public String error(Exception ex, Model model) {
         model.addAttribute("errorMessage", ex.getMessage());
         return "error";
     }
 
-
+    /**
+     * Exception handler for handling any unexpected exceptions.
+     *
+     * @param ex     The exception object.
+     * @param model  The model object.
+     * @return The view name for the error page.
+     */
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public String handleException(Exception ex, Model model) {

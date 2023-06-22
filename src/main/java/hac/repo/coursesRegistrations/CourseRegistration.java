@@ -7,6 +7,9 @@ import jakarta.validation.constraints.*;
 import jakarta.persistence.UniqueConstraint;
 import java.io.Serializable;
 
+/**
+ * CourseRegistration entity
+ */
 @Entity
 @Table(uniqueConstraints = { @UniqueConstraint(name = "UniqueCourseNameAndStudent", columnNames = { "course_id", "student" }) })
 public class CourseRegistration implements Serializable {
