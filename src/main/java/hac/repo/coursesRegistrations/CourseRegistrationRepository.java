@@ -20,11 +20,14 @@ public interface CourseRegistrationRepository extends JpaRepository<CourseRegist
 
       int countByCourse(Course course);
 
+      @Modifying
       void deleteAllByCourse(Course course);
 
      @Query("SELECT c FROM Course c JOIN CourseRegistration cr ON c = cr.course WHERE cr.student = :studentName")
      List<Course> findCoursesByStudent(String studentName);
 
-
+    void deleteByCourseAndStudent(Course course, String student);
+    void deleteByStudent(String student);
+    void deleteByCourse(Course course);
 
 }

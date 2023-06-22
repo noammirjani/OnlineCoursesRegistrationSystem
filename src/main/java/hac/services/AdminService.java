@@ -1,12 +1,14 @@
 package hac.services;
 
+import hac.constants.MessagesConstants;
 import hac.repo.course.Course;
-import hac.repo.coursesRegistrations.CourseRegistration;
+import hac.repo.course.CourseFullException;
 import hac.repo.course.CourseRepository;
+import hac.repo.coursesRegistrations.CourseRegistration;
 import hac.repo.coursesRegistrations.CourseRegistrationRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -17,73 +19,92 @@ import java.util.Set;
 public class AdminService {
 
     @Autowired
-    private CourseRepository repository;
+    private CourseRepository courseRepository;
     @Autowired
     private CourseRegistrationRepository registrationRepository;
 
-    public List<Course> findAllCourses(){
-        return repository.findAll();
-    }
-
-    public List<CourseRegistration> findAllRegistrations(){
+    public List<CourseRegistration> getAllRegistrations() {
         return registrationRepository.findAll();
     }
 
-    public void saveCourse(Course course){
-        repository.save(course);
+    public List<Course> getAllCourses() {
+        return courseRepository.findAll();
     }
 
-    public Course findCourse(long id){
-        return repository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid course Id:" + id));
+    public Course getCourse(long id) {
+        return courseRepository.findById(id).orElseThrow(() -> new IllegalArgumentException(MessagesConstants.COURSE_NOT_FOUND + id));
     }
 
-    public void deleteCourse(Course course){
-        repository.delete(course);
+    public CourseRegistration getRegistration(long id) {
+        return registrationRepository.findById(id).orElseThrow(() -> new IllegalArgumentException(MessagesConstants.REGISTRATION_NOT_FOUND + id));
+    }
+
+    public void addCourse(Course course){
+        courseRepository.save(course);
     }
 
     @Transactional
-    public void deleteAllRegistrationsByCourse(Course course){
+    public void deleteCourse(Course course) {
         registrationRepository.deleteAllByCourse(course);
-    }
-
-    public CourseRegistration findRegistration(long id){
-        return registrationRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid registration Id:" + id));
-    }
-
-    public List<String> getCoursesNames(){
-        Iterable<Course> courseRegistrations = repository.findAll();
-        List<String> courses = new ArrayList<>();
-        courseRegistrations.forEach(c -> courses.add(c.getCourseName()));
-        Set<String> uniqueCourseNameSet = new HashSet<>(courses);
-        return new ArrayList<> (uniqueCourseNameSet);
+        courseRepository.delete(course);
     }
 
     public List<String> getStudentsNames(){
-        Iterable<CourseRegistration> courseRegistration = registrationRepository.findAll();
-        List<String> studentsNames = new ArrayList<>();
-        courseRegistration.forEach(registration -> studentsNames.add(registration.getStudent()));
-        Set<String> uniqueStudentNameSet = new HashSet<>(studentsNames);
-        return new ArrayList<> (uniqueStudentNameSet);
+        Set<String> studentsNames = new HashSet<>();
+        registrationRepository.findAll().forEach(registration -> studentsNames.add(registration.getStudent()));
+        return new ArrayList<>(studentsNames);
     }
 
-    public void deleteRegistration(CourseRegistration registration){
+    public List<String> getCoursesNames(){
+        List<String> courses = new ArrayList<>();
+        courseRepository.findAll().forEach(c -> courses.add(c.getCourseName()));
+        return courses;
+    }
+
+    public void deleteRegistration(CourseRegistration registration) {
         registrationRepository.delete(registration);
     }
 
-    public void deleteAllRegistrations(){
+    public void deleteAllRegistrations() {
         registrationRepository.deleteAll();
     }
 
-    public List<CourseRegistration> searchRegistration(String courseName, String student){
+    public List<CourseRegistration> searchRegistrations(String courseName, String student){
         if (!courseName.equals("") && !student.equals("") ){
             return registrationRepository.findByCourseNameAndStudent(courseName, student);
         } else if (courseName.equals("") && !student.equals("") ) {
             return registrationRepository.findByStudent(student);
         } else if (!courseName.equals("")){ // && student.equals("")
-            System.out.println(registrationRepository.findByCourseName(courseName));
             return registrationRepository.findByCourseName(courseName);
         } else {
             return registrationRepository.findAll();
         }
     }
+
+    @Transactional
+    public void deleteSearchRegistrations(String courseName, String student){
+
+        if (!courseName.equals("") && !student.equals("") ){
+            Course c = courseRepository.findByCourseName(courseName);
+            registrationRepository.deleteByCourseAndStudent(c, student);
+        } else if (courseName.equals("") && !student.equals("") ) {
+            registrationRepository.deleteByStudent(student);
+        } else if (!courseName.equals("")){ // && student.equals("")
+            Course c = courseRepository.findByCourseName(courseName);
+            registrationRepository.deleteByCourse(c);
+        } else {
+            registrationRepository.deleteAll();
+        }
+    }
+
+    public void editCourse(Course course, long id){
+
+        course.setId(id);
+        if(!course.isChangeCapacityValid(registrationRepository.countByCourse(course))){
+            throw new CourseFullException(MessagesConstants.COURSE_FULL);
+        }
+        courseRepository.save(course);
+    }
+
+
 }

@@ -1,8 +1,13 @@
 package hac.controllers;
 
 import hac.repo.course.CourseRepository;
+import org.hibernate.JDBCException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +27,19 @@ public class MainController {
 
     @GetMapping("/login")
     public String login() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (!(auth instanceof AnonymousAuthenticationToken) && auth.isAuthenticated()) {
+            for (GrantedAuthority authority : auth.getAuthorities()) {
+                if (authority.getAuthority().equals("ROLE_ADMIN")) {
+                    return "redirect:/admin";
+                }
+            }
+            return "redirect:/user";
+        }
         return "login";
     }
+
 
     @GetMapping("/courses")
     public String main(Model model) {
@@ -38,17 +54,6 @@ public class MainController {
         return "about-us";
     }
 
-    @ExceptionHandler({Exception.class})
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public String handleException(Exception ex, Model model) {
-
-        //logger.error("Exception during execution of SpringSecurity application", ex);
-        String errorMessage = (ex != null ? ex.getMessage() : "Unknown error");
-
-        model.addAttribute("errorMessage", errorMessage);
-        return "error";
-    }
-
     @GetMapping("/403")
     public String forbidden() {
         return "403";
@@ -60,4 +65,13 @@ public class MainController {
         return "error";
     }
 
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public String handleException(Exception ex, Model model) {
+        String err = (ex != null ? ex.getMessage() : " -- Unknown error --");
+        String errorMessage = "An unexpected error occurred: " + err;
+        model.addAttribute("errorMessage", errorMessage);
+        return "error";
+    }
 }

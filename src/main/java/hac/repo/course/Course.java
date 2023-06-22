@@ -110,6 +110,14 @@ public class Course implements Serializable {
         this.overview=overview;
     }
 
+    public Boolean isFull(Integer currRegistered) {
+        return currRegistered >= capacity;
+    }
+
+    public Boolean isChangeCapacityValid(Integer currRegistered) {
+        return currRegistered <= capacity;
+    }
+
     @Override
     public String toString() {
         return "Course{" +
