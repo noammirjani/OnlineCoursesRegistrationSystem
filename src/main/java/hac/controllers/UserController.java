@@ -4,7 +4,7 @@ import hac.constants.MessagesConstants;
 import hac.repo.course.Course;
 import hac.repo.course.CourseFullException;
 import hac.repo.coursesRegistrations.CourseRegistration;
-import hac.services.UserAdminService;
+import hac.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -20,7 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class UserController {
 
     @Autowired
-    private UserAdminService service;
+    private UserService service;
 
     /**
      * Handles the request for the user index page.

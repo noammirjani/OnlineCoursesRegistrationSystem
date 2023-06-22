@@ -15,7 +15,7 @@ import java.util.List;
 
 
 @Service
-public class UserAdminService {
+public class UserService {
 
     @Autowired
     private CourseRepository courseRepository;
