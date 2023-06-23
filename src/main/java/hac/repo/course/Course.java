@@ -8,8 +8,7 @@ import jakarta.validation.constraints.*;
 import java.io.Serializable;
 
 /**
- * a purchase is a record of a user buying a product. You should not need to edit this file
- * but if you feel like you need to, please get in touch with the teacher.
+ * Course entity
  */
 @Entity
 public class Course implements Serializable {
@@ -110,6 +109,31 @@ public class Course implements Serializable {
         this.overview=overview;
     }
 
+    /**
+     * Checks if the course is full.
+     *
+     * @param currRegistered The current number of registered students.
+     * @return True if the course is full, false otherwise.
+     */
+    public Boolean isFull(Integer currRegistered) {
+        return currRegistered >= capacity;
+    }
+
+    /**
+     * Checks if the course capacity is valid.
+     *
+     * @param currRegistered The current number of registered students.
+     * @return True if the course capacity is valid, false otherwise.
+     */
+    public Boolean isChangeCapacityValid(Integer currRegistered) {
+        return currRegistered <= capacity;
+    }
+
+    /**
+     * Returns the string representation of the Course object.
+     *
+     * @return The string representation of the Course object.
+     */
     @Override
     public String toString() {
         return "Course{" +

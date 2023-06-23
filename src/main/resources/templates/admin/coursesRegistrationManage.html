@@ -12,7 +12,7 @@
     '/admin', 'https://img.freepik.com/premium-vector/illustration-vector-graphic-cartoon-character-businessman_516790-114.jpg?w=360')}">
     </div>
     <div th:if="${registrationChange}">
-        <div class="alert alert-success text-center" role="alert" th:text="${registrationChange}">
+        <div class="alert alert-success text-center mb-5" role="alert" th:text="${registrationChange}">
             Registration removed successfully!
         </div>
     </div>
@@ -22,14 +22,16 @@
                 <label class="visually-hidden" for="courseName">Course NAme</label>
                 <select class="form-control" id="courseName" name="courseName">
                     <option selected value="">Choose...</option>
-                    <option th:each="course: ${courses}" th:value="${course}" th:text="${course}"></option>
+                    <option th:each="course: ${courses}" th:value="${course}" th:text="${course}"
+                            th:selected="${course == courseName}"></option>
                 </select>
             </div>
             <div class="col-sm-3">
                 <label class="visually-hidden" for="studentName">Student</label>
-                <select class="form-control" id="studentName"  name="studentName">
+                <select class="form-control" id="studentName" name="studentName">
                     <option selected value="">Choose...</option>
-                    <option th:each="student: ${students}" th:value="${student}" th:text="${student}"></option>
+                    <option th:each="student: ${students}" th:value="${student}" th:text="${student}"
+                            th:selected="${student == studentName}"></option>
                 </select>
             </div>
             <div class="col-auto">
@@ -37,36 +39,56 @@
             </div>
         </form>
     </div>
-    <div th:if="${#lists.size(filteredData) == 0}">
-        <div class="alert alert-info text-center" role="alert">
-            Didnt found fit registrations for your search!
+    <div th:if="${filteredData}" class="mb-5">
+        <div th:if="${#lists.size(filteredData) == 0}" class="mb-5">
+            <div class="alert alert-info text-center mb-5" role="alert">
+                No registrations for your search!
+            </div>
+        </div>
+        <div th:unless="${#lists.size(filteredData) == 0}" class="container mb-5 text-center">
+            <div class="table-responsive" >
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th scope="col">Course Name</th>
+                        <th scope="col">Student Name</th>
+                        <th scope="col"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="registeration: ${filteredData}">
+                        <td class="text-justify" th:text="${registeration.getCourse().getCourseName()}"></td>
+                        <td class="text-justify" th:text="${registeration.student}"></td>
+                        <td>
+                            <form th:action="@{'/admin/coursesRegistrationManage/deleteRegistration/' + ${registeration.id}}" method="post">
+                                <input type="hidden" th:value="${courseName}" name="courseName"/>
+                                <input type="hidden" th:value="${studentName}" name="studentName"/>
+                                <button type="submit" class="btn btn-outline-danger my-2">delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="row justify-content-center">
+                    <div class="col-auto">
+                        <form th:action="@{/admin/coursesRegistrationManage/removeSearchRegistrations}" method="post">
+                            <input type="hidden" th:value="${courseName}" name="courseName"/>
+                            <input type="hidden" th:value="${studentName}" name="studentName"/>
+                            <button type="submit" class="btn btn-outline-danger my-2 mb-5">Remove <strong>search</strong> registrations</button>
+                        </form>
+                    </div>
+                    <div class="col-auto">
+                        <form th:action="@{/admin/coursesRegistrationManage/removeAllRegistrations}" method="post">
+                            <button type="submit" class="btn btn-danger my-2 mb-5">Remove <strong>all</strong> registrations</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <div th:unless="${#lists.size(filteredData) == 0}" class="container mb-5 text-center">
-        <div class="table-responsive" >
-            <table class="table table-hover">
-                <thead>
-                <tr>
-                    <th scope="col">Course Name</th>
-                    <th scope="col">Student Name</th>
-                    <th scope="col"></th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="registeration: ${filteredData}">
-                    <td class="text-justify" th:text="${registeration.courseName}"></td>
-                    <td class="text-justify" th:text="${registeration.student}"></td>
-                    <td>
-                        <form th:action="@{'/admin/coursesRegistrationManage/deleteRegistration/' + ${registeration.id}}" method="post">
-                            <button type="submit" class="btn btn-outline-danger my-2">delete</button>
-                        </form>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-            <form th:action="@{/admin/coursesRegistrationManage/removeAllRegistration}" method="post">
-                <button type="submit" class="btn btn-outline-danger my-2 mb-5">Remove all</button>
-            </form>
+    <div th:unless="${filteredData}" class="mb-5">
+        <div class="alert alert-warning text-center mb-5" role="alert">
+            No search was made!
         </div>
     </div>
 </main>

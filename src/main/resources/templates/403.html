@@ -1,10 +1,15 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en" class="h-100">
-<head th:replace="~{fragments/head :: head('OCM-EDU 403', @{/css/403.css})}"></head>
-<body class="d-flex flex-column h-100 ">
-<img src="https://img.freepik.com/premium-vector/login-access-denied-vector-illustration-system-refuses-password-error-entry-computer-device-showing-user-does-have-permission-website-mobile-development_2175-1262.jpg" alt="403" class="img-fluid">
-<div class="mb-5 d-flex justify-content-center">
-  <a th:href="@{/}" class="button btn text-light ">Back to Home Page</a>
+<html xmlns:th="http://www.thymeleaf.org" lang="en" >
+<head th:replace="~{fragments/head :: head('OCM-EDU - 403', @{/css/403.css})}"></head>
+<body>
+<div class="position-relative text-center vh-100 mt-5">
+  <img src="https://img.freepik.com/premium-vector/login-access-denied-vector-illustration-system-refuses-password-error-entry-computer-device-showing-user-does-have-permission-website-mobile-development_2175-1262.jpg" alt="403" class="h-75">
+  <div>
+    <a th:href="@{/home-page}" class="button btn text-light ">Back to Home Page</a>
+  </div>
+  <div th:if="${errorMessage}">
+    <div class="alert alert-info"> <span th:text="${errorMessage}"></span> </div>
+  </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"

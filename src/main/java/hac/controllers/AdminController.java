@@ -1,157 +1,272 @@
 package hac.controllers;
 
+import hac.constants.MessagesConstants;
+import hac.repo.course.CourseFullException;
+import hac.services.AdminService;
 import hac.repo.course.Course;
-import hac.repo.course.CourseRepository;
 import hac.repo.coursesRegistrations.CourseRegistration;
-import hac.repo.coursesRegistrations.CourseRegistrationRepository;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
+
+/**
+ * Controller class for handling administrative operations.
+ */
 @Controller
+@RequestMapping("/admin")
 public class AdminController {
-    @Autowired
-    private CourseRepository repository;
-    @Autowired
-    private CourseRegistrationRepository registrationRepository;
 
-    @GetMapping("/admin")
+    @Autowired
+    private AdminService service;
+
+    /**
+     * Handles the request for the admin index page.
+     *
+     * @return The view name for the admin index page.
+     */
+    @GetMapping
     public String adminIndex() {
         return "admin/index";
     }
 
-    @GetMapping("/admin/coursesManage")
+    /**
+     * Handles the request for the admin courses management page.
+     *
+     * @param model The model for the view.
+     * @return The view name for the admin courses management page.
+     */
+    @GetMapping("/coursesManage")
     public String adminCourses(Model model) {
-        model.addAttribute("courses", repository.findAll());
+        model.addAttribute("courses", service.getAllCourses());
         return "admin/coursesManage";
     }
 
-    @GetMapping("/admin/coursesManage/addCourse")
+    /**
+     * Handles the request for the admin add course page.
+     *
+     * @param course The course object for the form.
+     * @param model  The model for the view.
+     * @return The view name for the admin add course page.
+     */
+    @GetMapping("/coursesManage/addCourse")
     public String adminAddCourseGet(Course course, Model model) {
         model.addAttribute("course", course);
         return "admin/addCourse";
     }
 
-    @PostMapping("/admin/coursesManage/addCourse")
+    /**
+     * Handles the request for the admin add course page.
+     *
+     * @param course              The course object for the form.
+     * @param result              The binding result for the form.
+     * @param redirectAttributes  The redirect attributes for the view.
+     * @return The view name for the admin add course page.
+     */
+    @PostMapping("/coursesManage/addCourse")
     public String adminAddCoursePost(@Valid Course course, BindingResult result, RedirectAttributes redirectAttributes) {
-        return saveCourse(course, result, redirectAttributes, "admin/addCourse", "Course added successfully!");
+        if (result.hasErrors()){
+            return "admin/addCourse";
+        }
+        service.addCourse(course);
+        redirectAttributes.addFlashAttribute("courseChange", MessagesConstants.COURSE_ADD);
+        return "redirect:/admin/coursesManage";
     }
 
-    @GetMapping("/admin/coursesManage/editCourse/{id}")
+    /**
+     * Handles the request for the admin edit course page.
+     *
+     * @param id    The id of the course to edit.
+     * @param model The model for the view.
+     * @return The view name for the admin edit course page.
+     */
+    @GetMapping("/coursesManage/editCourse/{id}")
     public String adminEditCourseGet(@PathVariable("id") long id, Model model) {
-        Course course = findCourse(id);
-        model.addAttribute("course", course);
+        model.addAttribute("course", service.getCourse(id));
         return "admin/editCourse";
     }
 
-    @PostMapping("/admin/coursesManage/editCourse/{id}")
-    public String adminEditCoursePost(@PathVariable("id") long id, @Valid Course course, BindingResult result, RedirectAttributes redirectAttributes) {
-        course.setId(id);
-        return saveCourse(course, result, redirectAttributes, "admin/editCourse", "Course edited successfully!");
-    }
-
-
-    @Transactional
-    @PostMapping("/admin/coursesManage/deleteCourse/{id}")
-    public String adminDeleteCourse(@PathVariable("id") long id, RedirectAttributes redirectAttributes) {
-        Course course = findCourse(id);
-        registrationRepository.deleteAllByCourseName(course.getCourseName());
-        repository.delete(course);
-        redirectAttributes.addFlashAttribute("courseChange", "Course deleted successfully!");
-        return "redirect:/admin/coursesManage";
-    }
-
-    private String saveCourse(Course course, BindingResult result, RedirectAttributes redirectAttributes, String errorPage, String successMessage) {
+    /**
+     * Handles the request for the admin edit course page.
+     *
+     * @param id                  The id of the course to edit.
+     * @param course              The course object for the form.
+     * @param result              The binding result for the form.
+     * @param redirectAttributes  The redirect attributes for the view.
+     * @param model               The model for the view.
+     * @return The view name for the admin edit course page.
+     */
+    @PostMapping("/coursesManage/editCourse/{id}")
+    public String adminEditCoursePost(@PathVariable("id") long id, @Valid Course course, BindingResult result, RedirectAttributes redirectAttributes, Model model) {
         if (result.hasErrors()){
-            return errorPage;
+            return "admin/editCourse";
         }
-        repository.save(course);
-        redirectAttributes.addFlashAttribute("courseChange", successMessage);
+
+        try{
+            service.editCourse(course, id);
+        }catch (CourseFullException e) {
+            model.addAttribute("error", MessagesConstants.COURSE_FULL + " you cannot lower the capacity");
+            return "admin/editCourse";
+        }
+
+        redirectAttributes.addFlashAttribute("courseChange", MessagesConstants.COURSE_EDIT);
         return "redirect:/admin/coursesManage";
     }
 
-    private Course findCourse(long id) {
-        return repository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid course Id:" + id));
+    /**
+     * Handles the request for the admin delete course page.
+     *
+     * @param id                  The id of the course to delete.
+     * @param redirectAttributes  The redirect attributes for the view.
+     * @return The view name for the admin delete course page.
+     */
+    @PostMapping("/coursesManage/deleteCourse/{id}")
+    public String adminDeleteCourse(@PathVariable("id") long id, RedirectAttributes redirectAttributes) {
+        Course course = service.getCourse(id);
+        service.deleteCourse(course);
+        redirectAttributes.addFlashAttribute("courseChange", MessagesConstants.COURSE_DELETE);
+        return "redirect:/admin/coursesManage";
     }
 
-    private CourseRegistration findRegister(long id) {
-        return registrationRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid registration Id:" + id));
-    }
-
-    //-------- admin manage Registrations (students) --------------------
-    @GetMapping("/admin/coursesRegistrationManage")
+    /**
+     * Handles the request for the admin courses registration management page.
+     *
+     * @param model The model for the view.
+     * @return The view name for the admin courses registration management page.
+     */
+    @GetMapping("/coursesRegistrationManage")
     public String adminCoursesRegistration (Model model) {
-        model.addAttribute("courses", getCoursesNames());
-        model.addAttribute("students", getStudentsNames());
-        model.addAttribute("filteredData", registrationRepository.findAll());
+        model.addAttribute("courses", service.getCoursesNames());
+        model.addAttribute("students", service.getStudentsNames());
+        return "admin/coursesRegistrationManage";
+    }
+
+    /**
+     * Handles the request for retrieving all registrations.
+     *
+     * @param redirectAttributes  The redirect attributes object for flash attributes.
+     * @return The redirect view name for managing course registrations.
+     */
+    @GetMapping("/coursesRegistrationManage/allRegistrations")
+    public String adminCoursesRegistrationAll (RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("filteredData", service.getAllRegistrations());
+        return "redirect:/admin/coursesRegistrationManage";
+    }
+
+    /**
+     * Handles the POST request for deleting a registration.
+     *
+     * @param id                   The ID of the registration to be deleted.
+     * @param courseName           The name of the course associated with the registration.
+     * @param student              The name of the student associated with the registration.
+     * @param redirectAttributes   The redirect attributes object for flash attributes.
+     * @return The redirect view name for managing course registrations with search parameters.
+     */
+    @PostMapping("/coursesRegistrationManage/deleteRegistration/{id}")
+    public String adminDeleteRegistration(@PathVariable("id") long id,
+                                          @RequestParam("courseName") String courseName,
+                                          @RequestParam("studentName") String student,
+                                          RedirectAttributes redirectAttributes) {
+        CourseRegistration registration = service.getRegistration(id);
+        service.deleteRegistration(registration);
+        redirectAttributes.addFlashAttribute("registrationChange", MessagesConstants.REGISTRATION_DELETE);
+
+        return "redirect:/admin/coursesRegistrationManage/research?courseName=" + courseName + "&studentName=" + student;
+    }
+
+    /**
+     * Handles the GET request for searching registrations.
+     *
+     * @param courseName    The name of the course to search for registrations.
+     * @param student       The name of the student to search for registrations.
+     * @param model         The model object.
+     * @return The view name for managing course registrations with search results.
+     */
+    @GetMapping("/coursesRegistrationManage/research")
+    public String adminResearchRegistration(@RequestParam("courseName") String courseName,
+                                            @RequestParam("studentName") String student,
+                                            Model model) {
+        List<CourseRegistration> registrations = service.searchRegistrations(courseName, student);
+        model.addAttribute("filteredData", registrations);
+
+        // Pass the parameters back to the model so that they can be used to refill the select elements
+        model.addAttribute("courseName", courseName);
+        model.addAttribute("studentName", student);
+
+        // Perform usual setup for the manage page
+        model.addAttribute("courses", service.getCoursesNames());
+        model.addAttribute("students", service.getStudentsNames());
 
         return "admin/coursesRegistrationManage";
     }
 
-    @PostMapping("/admin/coursesRegistrationManage/deleteRegistration/{id}")
-    public String adminDeleteRegistration(@PathVariable("id") long id, RedirectAttributes redirectAttributes) {
-
-        CourseRegistration registration = findRegister(id);
-        registrationRepository.delete(registration);
-        redirectAttributes.addFlashAttribute("registrationChange", "Registration deleted successfully!");
-        return "redirect:/admin/coursesRegistrationManage";
-    }
-
-    @PostMapping("/admin/coursesRegistrationManage/removeAllRegistration")
+    /**
+     * Handles the POST request for deleting all registrations.
+     *
+     * @param redirectAttributes  The redirect attributes object for flash attributes.
+     * @return The redirect view name for managing course registrations with all registrations.
+     */
+    @PostMapping("/coursesRegistrationManage/removeAllRegistrations")
     public String adminDeleteAllRegistration(RedirectAttributes redirectAttributes) {
-
-        registrationRepository.deleteAll();
-        redirectAttributes.addFlashAttribute("registrationChange", "All registrations deleted successfully!");
-        return "redirect:/admin/coursesRegistrationManage";
+        service.deleteAllRegistrations();
+        redirectAttributes.addFlashAttribute("registrationChange", MessagesConstants.REGISTRATION_DELETE_ALL);
+        return "redirect:/admin/coursesRegistrationManage/allRegistrations";
     }
 
-    @PostMapping("/admin/coursesRegistrationManage/search")
+    /**
+     * Handles the POST request for deleting registrations based on search parameters.
+     *
+     * @param courseName           The name of the course to search for registrations.
+     * @param student              The name of the student to search for registrations.
+     * @param redirectAttributes   The redirect attributes object for flash attributes.
+     * @return The redirect view name for managing course registrations with search parameters.
+     */
+    @PostMapping("/coursesRegistrationManage/removeSearchRegistrations")
+    public String adminDeleteSearchRegistrations(@RequestParam("courseName") String courseName,
+                                                 @RequestParam("studentName") String student,
+                                                 RedirectAttributes redirectAttributes) {
+        service.deleteSearchRegistrations(courseName, student);
+        redirectAttributes.addFlashAttribute("registrationChange", MessagesConstants.REGISTRATION_DELETE_ALL);
+        return "redirect:/admin/coursesRegistrationManage/research?courseName=" + courseName + "&studentName=" + student;
+    }
+
+    /**
+     * Handles the POST request for searching registrations.
+     *
+     * @param courseName           The name of the course to search for registrations.
+     * @param student              The name of the student to search for registrations.
+     * @param redirectAttributes   The redirect attributes object for flash attributes.
+     * @return The redirect view name for managing course registrations with search results.
+     */
+    @PostMapping("/coursesRegistrationManage/search")
     public String adminSearchRegistration(@RequestParam("courseName") String courseName,
                                           @RequestParam("studentName") String student,
                                           RedirectAttributes redirectAttributes) {
-        List<CourseRegistration> registration;
-
-        if (!courseName.equals("") && !student.equals("") ){
-            registration = registrationRepository.findByCourseNameAndStudent(courseName, student);
-        } else if (courseName.equals("") && !student.equals("") ) {
-            registration = registrationRepository.findByStudent(student);
-        } else if (!courseName.equals("")){ // && student.equals("")
-            registration = registrationRepository.findByCourseName(courseName);
-        } else {
-            registration = registrationRepository.findAll();
-        }
-
-        redirectAttributes.addFlashAttribute("filteredData", registration);
-        return "redirect:/admin/coursesRegistrationManage";
+        List<CourseRegistration> registrations = service.searchRegistrations(courseName, student);
+        redirectAttributes.addFlashAttribute("filteredData", registrations);
+        return "redirect:/admin/coursesRegistrationManage/research?courseName=" + courseName + "&studentName=" + student;
     }
 
-
-    private List<String> getCoursesNames() {
-        Iterable<Course> courses = repository.findAll();
-        List<String> uniqueCourseNames = new ArrayList<>();
-        courses.forEach(course -> uniqueCourseNames.add(course.getCourseName()));
-        Set<String> uniqueCourseNameSet = new HashSet<>(uniqueCourseNames);
-        return new ArrayList<>(uniqueCourseNameSet);
-    }
-
-    private List<String> getStudentsNames() {
-        Iterable<CourseRegistration> courseRegistration = registrationRepository.findAll();
-        List<String> studentsNames = new ArrayList<>();
-        courseRegistration.forEach(registration -> studentsNames.add(registration.getStudent()));
-        Set<String> uniqueStudentNameSet = new HashSet<>(studentsNames);
-        return new ArrayList<> (uniqueStudentNameSet);
+    /**
+     * Exception handler for handling any unexpected exceptions.
+     *
+     * @param ex     The exception object.
+     * @param model  The model object.
+     * @return The view name for the error page.
+     */
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public String handleException(Exception ex, Model model) {
+        String err = (ex != null ? ex.getMessage() : " -- Unknown error --");
+        String errorMessage = "An unexpected error occurred: " + err;
+        model.addAttribute("errorMessage", errorMessage);
+        return "error";
     }
 }

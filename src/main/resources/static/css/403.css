@@ -1,3 +1,7 @@
 .button{
     background: linear-gradient(320deg, rgba(0, 140, 255, 0.678), rgba(128, 0, 128, 0.308));
 }
+
+.error{
+    background-color: #f8fcfc;
+}
