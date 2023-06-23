@@ -5,7 +5,7 @@
 <div class="position-relative text-center vh-100 mt-5">
   <img src="https://img.freepik.com/premium-vector/login-access-denied-vector-illustration-system-refuses-password-error-entry-computer-device-showing-user-does-have-permission-website-mobile-development_2175-1262.jpg" alt="403" class="h-75">
   <div>
-    <a th:href="@{/}" class="button btn text-light ">Back to Home Page</a>
+    <a th:href="@{/home-page}" class="button btn text-light ">Back to Home Page</a>
   </div>
   <div th:if="${errorMessage}">
     <div class="alert alert-info"> <span th:text="${errorMessage}"></span> </div>

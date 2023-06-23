@@ -61,7 +61,7 @@ public class AppConfig {
                 .csrf(withDefaults())
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("static/**", "/css/**", "/fragments/**", "/403", "/login",
-                                                   "/error-page","/", "/courses", "/about-us").permitAll()
+                                                   "/error-page","/", "/courses", "/about-us", "/home-page").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/user/**").hasRole("USER"))
                 .formLogin((form) -> form

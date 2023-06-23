@@ -38,17 +38,7 @@ public class MainController {
      */
     @GetMapping("/login")
     public String login() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        if (!(auth instanceof AnonymousAuthenticationToken) && auth.isAuthenticated()) {
-            for (GrantedAuthority authority : auth.getAuthorities()) {
-                if (authority.getAuthority().equals("ROLE_ADMIN")) {
-                    return "redirect:/admin";
-                }
-            }
-            return "redirect:/user";
-        }
-        return "login";
+        return getAutoPage("login");
     }
 
     /**
@@ -74,6 +64,11 @@ public class MainController {
     public String register(Model model) {
         model.addAttribute("activeMenu", "aboutUs");
         return "about-us";
+    }
+
+    @GetMapping("/home-page")
+    public String homePage() {
+         return getAutoPage("/");
     }
 
     /**
@@ -113,5 +108,21 @@ public class MainController {
         String errorMessage = "An unexpected error occurred: " + err;
         model.addAttribute("errorMessage", errorMessage);
         return "error";
+    }
+
+    private String getAutoPage(String elsePage) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (!(auth instanceof AnonymousAuthenticationToken) && auth.isAuthenticated()) {
+            for (GrantedAuthority authority : auth.getAuthorities()) {
+                if (authority.getAuthority().equals("ROLE_ADMIN")) {
+                    return "redirect:/admin";
+                }
+            }
+            return "redirect:/user";
+        }
+
+        return elsePage;
     }
 }
