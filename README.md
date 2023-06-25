@@ -69,7 +69,31 @@ Edit your configuration "ex5" at the top right. Make sure the "Main class" is se
 
 ## Database
 
+
 The system uses a relational database with two main entities, Course and CourseRegistration. There is a many-to-one relationship between these two entities, where many CourseRegistration entities can be associated with one Course. The CourseRepository and CourseRegistrationRepository provide methods to interact with the database, with a mix of standard JPA methods and custom queries.
+
+### Course Table
+The course table holds data about different courses available for registration. It has the following columns:
+
+* id: The primary key of the course.
+* name: The name of the course (unique).
+* code: The code of the course instructor.
+* capacity: The maximum capacity of students allowed in the course.
+* year: The start date of the course.
+* semester: The end date of the course.
+* professor: The professor of the course.
+The name column should hold a unique value for each course. This means that no two courses can have the same name.
+
+### Registration Table
+The registration table holds data about the registrations made by students for various courses. It has the following columns:
+
+* id: The primary key of the registration.
+* student: The email of the student -> caused by usage of spring security and the fact that we do not have a student table.
+* course_id: The foreign key referencing the id column in the course table.
+The course_id column establishes a many-to-one relationship between registrations and courses. Multiple registrations can be associated with the same course.
+
+### Database Schema - important data
+The uniqueness constraint in the registration table is applied to the combination of course_id and student_name. This means that each student can only be registered once for a specific course.
 
 ## Security
 
