@@ -35,9 +35,19 @@ public class MessagesConstants {
     public static final String REGISTRATION_DELETE_ALL = "All registrations were deleted successfully!";
 
     /**
+     * Message indicating successful deletion of all search registrations.
+     */
+    public static final String REGISTRATION_SEARCH_DELETE = "All search registrations were deleted successfully!";
+
+    /**
      * Message indicating that a course is already full and cannot accept new registrations.
      */
     public static final String COURSE_FULL = "Course is full!";
+
+    /**
+     * Message indicating that a course is already exists.
+     */
+    public static final String COURSE_EXIST = "Course is already exists - change the course name and course code plz!";
 
     /**
      * Message indicating that the user is already registered for a course.

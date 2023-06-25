@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en" >
 <head th:replace="~{fragments/head :: head('OCM-EDU - 404', @{/css/403.css})}"></head>
 <body class="error">
-<div class="position-relative text-center container">
-  <img src="https://img.freepik.com/vector-premium/error-404-no-encontrado-hombre-junto-monitor-que-muestra-error-404_491047-100.jpg" alt="403" class="mt-5">
+<div class=" text-center  mt-5">
+  <img src="https://img.freepik.com/vector-premium/error-404-no-encontrado-hombre-junto-monitor-que-muestra-error-404_491047-100.jpg" alt="404" class="h-75">
   <div th:if="${errorMessage}">
     <div class="alert alert-info"> <span th:text="${errorMessage}"></span> </div>
   </div>
@@ -16,3 +17,4 @@
         crossorigin="anonymous"></script>
 </body>
 </html>
+

@@ -24,13 +24,13 @@ body {
 
 .flip-card {
     background-color: transparent;
-    width: 250px;
+    width: 235px;
     height: 400px;
     perspective: 1000px;
 }
 
 .title {
-    font-size: 1.5em;
+    font-size: 10em;
     font-weight: 900;
     text-align: center;
     margin: 0;

@@ -7,6 +7,7 @@ import hac.repo.course.Course;
 import hac.repo.coursesRegistrations.CourseRegistration;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -68,14 +69,22 @@ public class AdminController {
      * @param course              The course object for the form.
      * @param result              The binding result for the form.
      * @param redirectAttributes  The redirect attributes for the view.
+     * @param model               The model for the view.
      * @return The view name for the admin add course page.
      */
     @PostMapping("/coursesManage/addCourse")
-    public String adminAddCoursePost(@Valid Course course, BindingResult result, RedirectAttributes redirectAttributes) {
+    public String adminAddCoursePost(@Valid Course course, BindingResult result, RedirectAttributes redirectAttributes, Model model) {
         if (result.hasErrors()){
             return "admin/addCourse";
         }
-        service.addCourse(course);
+
+        try{
+            service.addCourse(course);
+        }catch (DataIntegrityViolationException e) {
+            model.addAttribute("error", MessagesConstants.COURSE_EXIST);
+            return "admin/addCourse";
+        }
+
         redirectAttributes.addFlashAttribute("courseChange", MessagesConstants.COURSE_ADD);
         return "redirect:/admin/coursesManage";
     }
@@ -113,6 +122,12 @@ public class AdminController {
             service.editCourse(course, id);
         }catch (CourseFullException e) {
             model.addAttribute("error", MessagesConstants.COURSE_FULL + " you cannot lower the capacity");
+            return "admin/editCourse";
+        }catch (DataIntegrityViolationException e) {
+            if (e.getCause() instanceof org.hibernate.exception.ConstraintViolationException) {
+                model.addAttribute("error", MessagesConstants.COURSE_EXIST);
+            }
+            else throw e;
             return "admin/editCourse";
         }
 
@@ -221,7 +236,7 @@ public class AdminController {
     }
 
     /**
-     * Handles the POST request for deleting registrations based on search parameters.
+     * Handles the POST request for deleting all search registrations based on search parameters.
      *
      * @param courseName           The name of the course to search for registrations.
      * @param student              The name of the student to search for registrations.
@@ -233,7 +248,7 @@ public class AdminController {
                                                  @RequestParam("studentName") String student,
                                                  RedirectAttributes redirectAttributes) {
         service.deleteSearchRegistrations(courseName, student);
-        redirectAttributes.addFlashAttribute("registrationChange", MessagesConstants.REGISTRATION_DELETE_ALL);
+        redirectAttributes.addFlashAttribute("registrationChange", MessagesConstants.REGISTRATION_SEARCH_DELETE);
         return "redirect:/admin/coursesRegistrationManage/research?courseName=" + courseName + "&studentName=" + student;
     }
 

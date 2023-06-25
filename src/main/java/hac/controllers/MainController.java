@@ -1,7 +1,6 @@
 package hac.controllers;
 
 import hac.repo.course.CourseRepository;
-import org.hibernate.JDBCException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -66,6 +65,10 @@ public class MainController {
         return "about-us";
     }
 
+    /**
+     * Handles the request for the contact-us page.
+     * @return The view name for the contact-us page.
+     */
     @GetMapping("/home-page")
     public String homePage() {
          return getAutoPage("/");
@@ -110,6 +113,12 @@ public class MainController {
         return "error";
     }
 
+    /**
+     * Exception handler for handling any unexpected exceptions.
+     *
+     * @param elsePage The view name for the error page.
+     * @return The view name for the error page.
+     */
     private String getAutoPage(String elsePage) {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

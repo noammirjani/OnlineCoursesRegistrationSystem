@@ -42,7 +42,7 @@
     <div th:if="${filteredData}" class="mb-5">
         <div th:if="${#lists.size(filteredData) == 0}" class="mb-5">
             <div class="alert alert-info text-center mb-5" role="alert">
-                No registrations for your search!
+                No registrations!
             </div>
         </div>
         <div th:unless="${#lists.size(filteredData) == 0}" class="container mb-5 text-center">

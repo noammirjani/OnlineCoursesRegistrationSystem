@@ -12,12 +12,18 @@
         </div>
         <div class="flip-card-back card-back card-side">
             <div class="card-body">
-                <h5 class="card-title" th:text="${course.courseName}"></h5>
-                <h6 class="card-title" th:text="${course.professor}">Professor Name</h6>
-                <h6 class="card-text" th:text="${course.year}">Date</h6>
-                <h6 class="card-text" th:text="${course.capacity}">Capacity</h6>
+                <h5 class=" display-6" th:text="${course.courseName}"></h5>
+                <h6 class="card-title fw-5">
+                    Course by <span th:text="${course.professor}"></span>
+                </h6>
+                <h6 class="card-text">
+                    @<span th:text="${course.year}"></span>
+                </h6>
                 <p class="card-text" th:text="${course.overview}">Overview.</p>
-                <h6 class="card-text" th:text="${course.courseCode}">#id: 00000</h6>
+                <h6 class="card-text">Capacity:
+                    <span th:text="${course.capacity}"></span>
+                </h6>
+                <h6 class="card-text">#<span th:text="${course.courseCode}"></span></h6>
             </div>
         </div>
     </div>

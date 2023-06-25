@@ -19,7 +19,7 @@
     <div class="courses-grid container">
         <div th:switch="${coursesData.size()}">
             <h2 th:case="0">No courses yet!</h2>
-            <div th:case="*" class="row row-cols-xs-2 row-cols-md-3 row-cols-lg-4">
+            <div th:case="*" class="row row-cols-2 row-cols-lg-4">
                 <div th:each="course : ${coursesData}" class="col mb-3">
                     <div th:insert="~{fragments/courseCard.html :: courseCard(${course})}"></div>
                 </div>

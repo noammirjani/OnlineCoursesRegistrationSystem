@@ -7,5 +7,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface CourseRepository extends JpaRepository<Course, Long> {
 
+    /**
+     * This method is used to get a course by its name.
+     * @param courseName the name of the course.
+     * @return the course with the given name.
+     */
     Course findByCourseName(String courseName);
 }
