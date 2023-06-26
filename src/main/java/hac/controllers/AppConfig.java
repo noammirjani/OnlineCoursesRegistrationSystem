@@ -66,8 +66,6 @@ public class AppConfig {
                         .requestMatchers("/user/**").hasRole("USER"))
                 .formLogin((form) -> form
                                  .loginPage("/login")
-//                               .loginProcessingUrl("/perform_login")
-//                               .defaultSuccessUrl("/", true)
                                  .failureUrl("/login?error=true")
                                 .permitAll())
                 .logout((logout) -> logout.permitAll())

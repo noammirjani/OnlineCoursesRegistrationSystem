@@ -19,9 +19,11 @@ public class CourseRegistration implements Serializable {
     private Long id;
 
     @ManyToOne
+    @NotNull(message = "Course Name cannot be NULL")
     private Course course;
 
-    @NotEmpty(message = "Course Name is required")
+    @NotEmpty(message = "Student Name is required")
+    @NotNull(message = "Student Name cannot be NULL")
     @Size(max = 100, message = "Student Name must be no more than 100 characters")
     private String student;
 

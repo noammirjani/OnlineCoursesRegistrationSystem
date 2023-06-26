@@ -29,12 +29,12 @@ body {
     perspective: 1000px;
 }
 
-.title {
-    font-size: 10em;
-    font-weight: 900;
-    text-align: center;
-    margin: 0;
-}
+/*.title {*/
+/*    font-size: 10em;*/
+/*    font-weight: 900;*/
+/*    text-align: center;*/
+/*    margin: 0;*/
+/*}*/
 
 .flip-card-inner {
     position: relative;
@@ -61,12 +61,14 @@ body {
     backface-visibility: hidden;
     border: 1px solid #8d65e1;
     border-radius: 1rem;
+
 }
 
 .flip-card-front {
     background: linear-gradient(120deg, #d5c4ff 60%, rgb(238, 222, 255) 88%,
     rgb(195, 207, 255) 40%, rgba(92, 80, 255, 0.6) 48%);
     color: #161669;
+
 }
 
 .flip-card-back {
@@ -74,4 +76,9 @@ body {
     #84caf1 40%, rgb(151, 138, 239) 78%);
     color: #0f0056;
     transform: rotateY(180deg);
+}
+
+.card-body {
+    overflow-wrap: break-word;
+    overflow-x: auto;
 }

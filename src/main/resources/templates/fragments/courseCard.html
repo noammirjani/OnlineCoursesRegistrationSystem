@@ -1,9 +1,9 @@
 <div class="flip-card" th:fragment="courseCard(course)">
     <div class="flip-card-inner">
         <div class="flip-card-front card-front card-side">
-            <div class="card-body d-flex flex-column align-items-center justify-content-center">
+            <div class="card-body text-break d-flex flex-column align-items-center justify-content-center">
                 <div class="text-center">
-                    <h5 class="card-title display-4" th:text="${course.courseName}"></h5>
+                    <h5 class="display-6" th:text="${course.courseName}"></h5>
                 </div>
                 <div class="text-center">
                     <p class="card-text" th:text="${course.year}"></p>

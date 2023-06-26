@@ -22,7 +22,7 @@ public class Course implements Serializable {
     private Integer courseCode;
 
     @NotEmpty(message = "Course Name is required")
-    //@Pattern(regexp="^[a-zA-Z0-9 ]+$", message="Course Name cannot contain special characters")
+    @NotNull(message = "Course Name cannot be NULL")
     @Size(max = 50, message = "Course Name must be no more than 50 characters")
     @Column(unique = true)
     private String courseName;
@@ -38,6 +38,7 @@ public class Course implements Serializable {
     private Integer capacity;
 
     @NotEmpty(message = "Professor name is mandatory")
+    @NotNull(message = "Professor Name cannot be NULL")
     @Pattern(regexp="^[a-zA-Z ]+$", message="Professor name can contain only letters")
     private String professor;
 
@@ -47,7 +48,8 @@ public class Course implements Serializable {
     private Integer year;
 
     @NotEmpty(message = "Overview text is mandatory")
-    @Size(max = 255, message = "Overview text must be less than 500 characters")
+    @NotNull(message = "Overview text cannot be NULL")
+    @Size(max = 255, message = "Overview text must be less than 255 characters")
     private String overview;
 
 
