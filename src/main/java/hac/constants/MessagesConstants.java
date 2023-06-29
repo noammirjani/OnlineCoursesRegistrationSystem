@@ -20,6 +20,11 @@ public class MessagesConstants {
     public static final String COURSE_DELETE = "Course deleted successfully!";
 
     /**
+     * Message indicating successful deletion of all courses.
+     */
+    public static final String COURSE_DELETE_ALL = "All courses were deleted successfully!";
+
+    /**
      * Message indicating successful addition of a registration to the schedule.
      */
     public static final String REGISTRATION_ADD = "Registration added to your schedule!";

@@ -1,11 +1,13 @@
 package hac.repo.course;
 
+import hac.repo.coursesRegistrations.CourseRegistration;
 import jakarta.persistence.*;
 
 import jakarta.validation.constraints.*;
 
 
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  * Course entity
@@ -52,6 +54,9 @@ public class Course implements Serializable {
     @Size(max = 255, message = "Overview text must be less than 255 characters")
     private String overview;
 
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    private Set<CourseRegistration> registrations;
+
 
     public Course(Integer courseCode, String courseName, Integer semester,
                   Integer capacity, String professor, Integer year, String overview) {
@@ -88,6 +93,10 @@ public class Course implements Serializable {
         return year;
     }
 
+    public void setRegistrations(Set<CourseRegistration> registrations) {
+        this.registrations = registrations;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -109,6 +118,10 @@ public class Course implements Serializable {
     }
     public void setOverview(String overview) {
         this.overview=overview;
+    }
+
+    public Set<CourseRegistration> getRegistrations() {
+        return registrations;
     }
 
     /**

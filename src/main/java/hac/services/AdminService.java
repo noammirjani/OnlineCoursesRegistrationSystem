@@ -10,10 +10,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 
 /**
@@ -66,6 +63,7 @@ public class AdminService {
      * @param course the course of the course registration.
      */
     public void addCourse(Course course){
+
         courseRepository.save(course);
     }
 
@@ -75,8 +73,8 @@ public class AdminService {
      */
     @Transactional
     public void deleteCourse(Course course) {
-        registrationRepository.deleteAllByCourse(course);
-        courseRepository.delete(course);
+
+        courseRepository.deleteById(course.getId());
     }
 
     /**
@@ -84,9 +82,8 @@ public class AdminService {
      * @return a list of all the students names.
      */
     public List<String> getStudentsNames(){
-        Set<String> studentsNames = new HashSet<>();
-        registrationRepository.findAll().forEach(registration -> studentsNames.add(registration.getStudent()));
-        return new ArrayList<>(studentsNames);
+
+        return registrationRepository.findDistinctStudentNames();
     }
 
     /**
@@ -94,9 +91,8 @@ public class AdminService {
      * @return a list of all the courses.
      */
     public List<String> getCoursesNames(){
-        List<String> courses = new ArrayList<>();
-        courseRepository.findAll().forEach(c -> courses.add(c.getCourseName()));
-        return courses;
+
+        return courseRepository.findDistinctCourseNames();
     }
 
     /**
@@ -104,6 +100,7 @@ public class AdminService {
      * @param registration the course registration to be added.
      */
     public void deleteRegistration(CourseRegistration registration) {
+
         registrationRepository.delete(registration);
     }
 
@@ -111,6 +108,7 @@ public class AdminService {
      * This method is used to delete all the course registrations.
      */
     public void deleteAllRegistrations() {
+
         registrationRepository.deleteAll();
     }
 
@@ -158,14 +156,21 @@ public class AdminService {
      * @param course the course registration to be edited.
      * @param id the id of the course registration to be edited.
      */
+    @Transactional
     public void editCourse(Course course, long id){
-
         course.setId(id);
+
+        // validation
         if(!course.isChangeCapacityValid(registrationRepository.countByCourse(course))){
             throw new CourseFullException(MessagesConstants.COURSE_FULL);
         }
         courseRepository.save(course);
     }
 
-
+    /**
+     * This method is used to delete all the courses. (the registrations are deleted automatically)
+     */
+    public void deleteAllCourses() {
+    	courseRepository.deleteAll();
+    }
 }

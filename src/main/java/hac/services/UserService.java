@@ -10,7 +10,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -58,6 +57,7 @@ public class UserService {
     @Transactional
     public void addRegistration(Course course, String student) throws CourseFullException {
 
+        //validation
         int registrations = registrationRepository.countByCourse(course);
         if (course.isFull(registrations)) {
             throw new CourseFullException(course.getCourseName());
@@ -93,8 +93,6 @@ public class UserService {
      * @return a list of all the courses of the student.
      */
     public List<String> getStudentCoursesNames(String student) {
-        List<String> courses = new ArrayList<>();
-        getStudentRegistrations(student).forEach(c -> courses.add(c.getCourseName()));
-        return courses;
+        return registrationRepository.findCoursesNamesByStudent(student);
     }
 }

@@ -269,6 +269,13 @@ public class AdminController {
         return "redirect:/admin/coursesRegistrationManage/research?courseName=" + courseName + "&studentName=" + student;
     }
 
+    @PostMapping("/coursesManage/deleteAllCourses")
+    public String adminDeleteAllCourses(RedirectAttributes redirectAttributes) {
+        service.deleteAllCourses();
+        redirectAttributes.addFlashAttribute("courseChange", MessagesConstants.COURSE_DELETE_ALL);
+        return "redirect:/admin/coursesManage";
+    }
+
     /**
      * Exception handler for handling any unexpected exceptions.
      *

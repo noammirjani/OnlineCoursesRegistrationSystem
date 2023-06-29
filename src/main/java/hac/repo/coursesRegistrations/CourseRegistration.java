@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import jakarta.persistence.UniqueConstraint;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * CourseRegistration entity
@@ -18,9 +19,12 @@ public class CourseRegistration implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
     @ManyToOne
+    @JoinColumn(name = "course_id", nullable = false)
     @NotNull(message = "Course Name cannot be NULL")
     private Course course;
+
 
     @NotEmpty(message = "Student Name is required")
     @NotNull(message = "Student Name cannot be NULL")
@@ -56,4 +60,7 @@ public class CourseRegistration implements Serializable {
         this.course = course;
     }
 
+    public String toString() {
+        return "CourseRegistration{" + "id=" + id + ", course=" + course + ", student='" + student + '\'' + '}';
+    }
 }
