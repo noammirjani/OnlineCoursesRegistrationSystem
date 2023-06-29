@@ -69,6 +69,15 @@ Edit your configuration "ex5" at the top right. Make sure the "Main class" is se
 
 ## Database
 
+### Bidirectional Association
+In the context of the database relations within our project, we maintain a bidirectional association between the Course and CourseRegistration entities. This association enables efficient access to related data from either end of the relationship.
+
+The primary reason we opted for a bidirectional association is due to the nature of our data and its use within the application:
+
+In many scenarios, when querying CourseRegistration records, we need to fetch corresponding Course data. The ManyToOne relationship in the CourseRegistration entity simplifies this task by automatically resolving the related Course data without the need for additional queries or manual joins.
+In turn, the OneToMany relationship in the Course entity provides an easy way to fetch all CourseRegistration records associated with a specific Course. This relationship is crucial in use cases where we need to track all registrations for a particular course.
+Moreover, Hibernate automatically manages the synchronization of these relationships. When we update one side of the relationship, Hibernate ensures that the other side is also updated. This synchronization saves us from manually updating both sides of the relationship, thus reducing the risk of data inconsistency.
+
 
 The system uses a relational database with two main entities, Course and CourseRegistration. There is a many-to-one relationship between these two entities, where many CourseRegistration entities can be associated with one Course. The CourseRepository and CourseRegistrationRepository provide methods to interact with the database, with a mix of standard JPA methods and custom queries.
 
@@ -94,6 +103,35 @@ The course_id column establishes a many-to-one relationship between registration
 
 ### Database Schema - important data
 The uniqueness constraint in the registration table is applied to the combination of course_id and student_name. This means that each student can only be registered once for a specific course.
+
+### Tests
+Please we recommend you to run your own test on our site. 
+We would like you to test the following scenarios:
+* Register to a course that is not full
+* Register to a course that is full
+* Edit a course capacity that is not full
+* Edit a course capacity that is full
+* Edit a course (without changing the capacity) -> with or without students registered to the course
+  * in this case we that the edit will be saved, and all the registrations to this course will be saved as they was
+  * we didnt want to remove all the registrations because we thought that it is not fair to the students that registered to the course before the edit, it doesnt suppose to affect them such little changes
+* Delete a course that is not full
+* Delete a course that is full
+* Delete all registrations
+* Delete all search registration 
+* Delete a specific registration
+* Add a course with a name that already exists (or course code)
+* Add a course with a name that does not exist (or course code)
+* Add or edit a course with a capital letters of existing course name (or course code)
+* there are several of validation on the forms inputs that we would like you to test
+  *   course name and course code must be unique
+  *   year 2000-2023
+  *   semester 1-3
+  *   capacity 1-100
+  *   professor name letters only (and space)
+  *   overview 255 characters max
+  *   course code, year, semester, capacity positive values only
+
+** this is not a full list of tests, please feel free to add more tests, we will pass them :)
 
 ## Security
 
