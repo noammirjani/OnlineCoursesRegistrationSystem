@@ -1,0 +1,16 @@
+## Course Examples Details
+
+| Course Name         | Professor     | Course Code | Year | Semester | Capacity | Overview                                                                                    |
+|---------------------|---------------|-------------|------|----------|----------|---------------------------------------------------------------------------------------------|
+| Biology 101         | Dr Johnson    | 1           | 2023 | Fall     | 60       | Introductory biology covering cellular structure, genetics, and ecological systems.           |
+| Chemistry Basics    | Prof Williams | 2           | 2023 | Spring   | 50       | Basics of atomic structure, chemical reactions, and stoichiometry.                           |
+| Physics Fundamentals| Dr Smith      | 3           | 2023 | Fall     | 55       | Introduction to classical physics including motion, forces, and thermodynamics.              |
+| History 101         | Prof Davis    | 4           | 2023 | Spring   | 45       | Survey of global history, key events, cultures, and societal changes.                         |
+| Computer Science    | Prof Brown    | 5           | 2023 | Fall     | 70       | Introduction to programming fundamentals, algorithms, and data structures.                   |
+| Literature Survey   | Dr Martinez   | 6           | 2023 | Spring   | 40       | Extensive examination of literary genres, movements, and critical theories.                   |
+| Mathematics         | Prof Lee      | 7           | 2023 | Fall     | 65       | Covers calculus, algebra, and discrete mathematics focusing on problem-solving.              |
+| Art Appreciation    | Dr Adams      | 8           | 2023 | Spring   | 55       | Study of art history, techniques, and cultural significance across periods and styles.        |
+| Machine Learning    | Dr Rodriguez  | 9           | 2023 | Fall     | 45       | Theory and applications of ML algorithms including supervised learning and neural networks.  |
+| Economics Principles| Dr Garcia     | 10          | 2023 | Fall     | 55       | Introduction to micro and macroeconomics, fiscal policies, and international trade.           |
+| Environmental Science| Dr Thompson   | 11          | 2023 | Spring   | 60       | Study of ecosystems, conservation, climate change, and sustainable solutions.                 |
+| Psychology Fundamentals| Prof Wilson | 12          | 2023 | Fall     | 50       | Basic principles in psychology, human behavior, and cognitive processes.                       |
