@@ -16,7 +16,6 @@
 - [Tests](#tests)
 - [Security](#security)
 - [Contributing](#contributing)
-- [License](#license)
 
 ## Introduction
 OCR EDU is an Online Course Registration System developed using Java and Spring Boot. It's designed to facilitate course creation, management, and registration for administrators and students.
@@ -153,6 +152,3 @@ Utilizes Spring Security for authentication and authorization to ensure restrict
 
 ## Contributing
 For contribution guidelines, refer to [CONTRIBUTING.md](CONTRIBUTING.md). Contributions, issues, and feature requests are welcome.
-
-## License
-This project is licensed under the [License Name]. See the [LICENSE](LICENSE) file for details.
