@@ -1,9 +1,19 @@
 # OCR EDU - Online Course Registration System
 
+## Introduction
+The OCR EDU system provides a comprehensive platform for educational institutions to streamline the process of managing courses and student registrations. With a user-friendly interface and robust functionalities, it caters to the distinct needs of both administrators and students.
+
+## Image Preview
+
+| Home Screen | Courses Overview | User Home Screen | User Registered Courses |
+|-------------|------------------|------------------|-------------------------|
+| <img src="src/main/resources/static/images/homescreen.png" alt="Home Screen" width="200" height="150"/> | <img src="src/main/resources/static/images/courses overview.png" alt="Courses Overview" width="200" height="150"/> | <img src="src/main/resources/static/images/user home screen.png" alt="User Home Screen" width="200" height="150"/> | <img src="src/main/resources/static/images/User Registered courses.png" alt="User Registered Courses" width="200" height="150"/> |
+
+| User Schedule Management | Admin Home Screen | Admin Manage Courses | Admin Manage Registration |
+|--------------------------|-------------------|----------------------|---------------------------|
+| <img src="src/main/resources/static/images/User schedule manage.png" alt="User Schedule Management" width="200" height="150"/> | <img src="src/main/resources/static/images/admin home screen.png" alt="Admin Home Screen" width="200" height="150"/> | <img src="src/main/resources/static/images/admin manage courses.png" alt="Admin Manage Courses" width="200" height="150"/> | <img src="src/main/resources/static/images/admin manage registration.png" alt="Admin Manage Registration" width="200" height="150"/> |
+
 ## Table of Contents
-- [Introduction](#introduction)
-- [Image Preview](#Image-Preview)
-- [Overview](#Overview)
 - [Features](#features)
 - [Installation](#installation)
   - [MAMP Setup](#mamp-setup)
@@ -17,22 +27,6 @@
 - [Security](#security)
 - [Contributing](#contributing)
 
-## Introduction
-OCR EDU is an Online Course Registration System developed using Java and Spring Boot. It's designed to facilitate course creation, management, and registration for administrators and students.
-
-## Image Preview
-
-| Home Screen | Courses Overview | User Home Screen | User Registered Courses |
-|-------------|------------------|------------------|-------------------------|
-| <img src="src/main/resources/static/images/homescreen.png" alt="Home Screen" width="200" height="150"/> | <img src="src/main/resources/static/images/courses overview.png" alt="Courses Overview" width="200" height="150"/> | <img src="src/main/resources/static/images/user home screen.png" alt="User Home Screen" width="200" height="150"/> | <img src="src/main/resources/static/images/User Registered courses.png" alt="User Registered Courses" width="200" height="150"/> |
-
-| User Schedule Management | Admin Home Screen | Admin Manage Courses | Admin Manage Registration |
-|--------------------------|-------------------|----------------------|---------------------------|
-| <img src="src/main/resources/static/images/User schedule manage.png" alt="User Schedule Management" width="200" height="150"/> | <img src="src/main/resources/static/images/admin home screen.png" alt="Admin Home Screen" width="200" height="150"/> | <img src="src/main/resources/static/images/admin manage courses.png" alt="Admin Manage Courses" width="200" height="150"/> | <img src="src/main/resources/static/images/admin manage registration.png" alt="Admin Manage Registration" width="200" height="150"/> |
-
-
-## Overview
-The OCR EDU system provides a comprehensive platform for educational institutions to streamline the process of managing courses and student registrations. With a user-friendly interface and robust functionalities, it caters to the distinct needs of both administrators and students.
 
 ### Administrator Dashboard
 Administrators have access to a feature-rich dashboard enabling them to efficiently oversee and manage courses and student registrations. They can perform tasks such as creating new courses, updating existing ones, managing capacities, viewing all courses and associated registrations, and employing various filters to streamline data retrieval.
